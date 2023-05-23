@@ -14,11 +14,13 @@ class LoginPage(QWidget):
         self.signInButton.clicked.connect(self.loginFunction)
         self.createAccButton.clicked.connect(self.gotoSignUpWindow)
 
-        # login function, needs to be connected with logic and database
+    # login function, needs to be connected with logic and database
     def loginFunction(self):
         login = self.loginEnterText.text()
         password = self.passwordEnterText.text()
-        print(f"Logged with login: {login} and password: {password}")  # this print may be deleted in future
+        if True:
+            self.communicateTextLabel.setText("Incorrect password!")
+            # widget.setFixedSize()
 
     def gotoSignUpWindow(self):
         createAccWindow = SignUpPage()
@@ -35,16 +37,18 @@ class SignUpPage(QWidget):
 
     # Sign Up button function -needs to be updated and connected with logic and database
     def signUpFunction(self):
-        # branch to validate confirmation password
-        if self.confirmPasText.text() == self.passwordText.text():
-            login = self.loginText.text()
-            password = self.passwordText.text()
-            print(f"Sign up successfully, login: {login}, password: {password}")  # this print may be deleted in future
+        login = self.loginText.text()
+        password = self.passwordText.text()
+        confirmPas = self.confirmPasText.text()
+
+        if True:
+            self.communicateTextLabel.setText("Incorrect password!")
+
+        else:
             # returning to the start window
             loginWindow = LoginPage()
             widget.addWidget(loginWindow)
             widget.setCurrentIndex(widget.currentIndex() + 1)
-
 
 
 if __name__ == '__main__':

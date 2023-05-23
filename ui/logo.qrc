@@ -1,6 +1,5 @@
 <RCC>
   <qresource prefix="ui">
     <file>logo.png</file>
-    <file>bckimg.jpg</file>
   </qresource>
 </RCC>
