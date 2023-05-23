@@ -36,7 +36,6 @@ class UserService:
 
     def is_user_exists(self, login):
         user = self.user_repository.get_user_by_login(login)
-        logger.info("user", user)
         if user:
             return True
         else:
