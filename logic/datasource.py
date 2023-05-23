@@ -1,3 +1,4 @@
+import os
 import pyodbc
 from loguru import logger
 
@@ -10,11 +11,11 @@ class DataSource:
             raise Exception("Singleton class, use get_instance() to obtain an instance.")
         self.connection = pyodbc.connect(
             driver ="{MySQL ODBC 8.0 ANSI Driver}",
-            server="localhost",
+            server=os.environ.get("SERVER_PATH"),
             user="root",
             password="root",
             database="mydb",
-            autocommit =True
+            autocommit=True
         )
 
     @staticmethod
