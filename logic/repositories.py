@@ -23,8 +23,7 @@ class UserRepository:
         else:
             logger.info("Execute query")
             self.cursor.execute("INSERT INTO user (login, password) VALUES (?, ?)", (login, password))
-        return True
-
+        return True, "Successfully logged in"
 
     def login_user(self, login, password):
         logger.info("User with login '{}' wants to login".format(login))
@@ -33,12 +32,13 @@ class UserRepository:
             user = self.get_user_by_login(login)
             if user[2] == password:
                 logger.info("Successfully logged in")
-                return True
+                return True, "Successfully logged in"
             else:
                 logger.info("Wrong password")
-                return False
+                return False, "Wrong password"
         else:
-            logger.info("User dont exist")
+            logger.info("User don't exist")
+            return False, "User don't exist"
 
     def get_user_by_login(self, login):
         self.cursor.execute("SELECT * FROM user WHERE login = ?", (login,))
