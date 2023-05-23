@@ -7,6 +7,7 @@ from logic.services import UserService
 from loguru import logger
 import ui.background_rc
 
+
 # Login window class
 class LoginPage(QWidget):
     def __init__(self):
@@ -19,7 +20,6 @@ class LoginPage(QWidget):
         logger.add("logs/application.log", rotation="500 MB", level="INFO")
         self.user_service = UserService()
 
-    # login function, needs to be connected with logic and database
     def login_function(self):
         login = self.loginEnterText.text()
         password = self.passwordEnterText.text()
@@ -30,9 +30,11 @@ class LoginPage(QWidget):
             logger.warning(message)
         else:
             self.communicateTextLabel.setText("")
-            # Success login, go t main menu
             logger.success(message)
-            # widget.setFixedSize()
+            mainWindow = MainPage()
+            widget.addWidget(mainWindow)
+            widget.setFixedSize(1325, 788)
+            widget.setCurrentIndex(widget.currentIndex() + 1)
 
     def goto_sign_up(self):
         createAccWindow = SignUpPage()
@@ -49,7 +51,6 @@ class SignUpPage(QWidget):
 
         self.user_service = UserService()
 
-    # Sign Up button function -needs to be updated and connected with logic and database
     def sign_up_function(self):
         login = self.loginText.text()
         password = self.passwordText.text()
@@ -62,12 +63,24 @@ class SignUpPage(QWidget):
             logger.warning(message)
         else:
             self.communicateTextLabel.setText("")
-            # Success login, go t main menu
             logger.success(message)
             # returning to the start window
             loginWindow = LoginPage()
             widget.addWidget(loginWindow)
             widget.setCurrentIndex(widget.currentIndex() + 1)
+
+
+class MainPage(QWidget):
+    def __init__(self):
+        super(MainPage, self).__init__()
+        loadUi("ui/MainPage.ui", self)
+        self.signOutButton.clicked.connect(self.sign_out_function)
+
+    def sign_out_function(self):
+        loginWindow = LoginPage()
+        widget.addWidget(loginWindow)
+        widget.setFixedSize(549, 626)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
 if __name__ == '__main__':
