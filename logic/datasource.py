@@ -1,4 +1,5 @@
 import os
+
 import pyodbc
 from loguru import logger
 
