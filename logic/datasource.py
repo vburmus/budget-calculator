@@ -18,6 +18,7 @@ class DataSource:
             database="mydb",
             autocommit=True
         )
+        logger.info("DataSource created, connection made.")
 
     @staticmethod
     def get_instance():

@@ -31,7 +31,7 @@ class LoginPage(QWidget):
         else:
             self.communicateTextLabel.setText("")
             logger.success(message)
-            mainWindow = MainPage()
+            mainWindow = MainPage(success)
             widget.addWidget(mainWindow)
             widget.setFixedSize(1325, 788)
             widget.setCurrentIndex(widget.currentIndex() + 1)
@@ -71,16 +71,18 @@ class SignUpPage(QWidget):
 
 
 class MainPage(QWidget):
-    def __init__(self):
+    def __init__(self,user):
         super(MainPage, self).__init__()
         loadUi("ui/MainPage.ui", self)
         self.signOutButton.clicked.connect(self.sign_out_function)
+        self.user = user
 
     def sign_out_function(self):
         loginWindow = LoginPage()
         widget.addWidget(loginWindow)
         widget.setFixedSize(549, 626)
         widget.setCurrentIndex(widget.currentIndex() + 1)
+        self.user = None
 
 
 if __name__ == '__main__':
