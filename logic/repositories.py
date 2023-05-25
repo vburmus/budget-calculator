@@ -3,6 +3,26 @@ from loguru import logger
 
 from logic.entities import User, Account, Category, Type, Transaction
 
+SELECT_TRANSACTIONS_BY_ACCOUNT_TYPE_CATEGORY_QUERY = "SELECT * FROM transaction " \
+                                                     "WHERE account_id = ? and type_id = ? and category_id = ? "
+
+SELECT_TRANSACTIONS_BY_ACCOUNT_TYPE_QUERY = "SELECT * FROM transaction WHERE account_id = ? and type_id = ?"
+
+SELECT_TRANSACTIONS_BY_ACCOUNT_QUERY = "SELECT * FROM transaction WHERE account_id = ?"
+
+SELECT_TRANSACTION_BY_ID_QUERY = "SELECT * FROM transaction WHERE id = ?"
+
+CREATE_TRANSACTION_QUERY = "INSERT INTO transaction" \
+                           " (amount, description, account_id, type_id, category_id) VALUES (?,?,?,?,?)"
+
+GET_TYPE_BY_ID_QUERY = "SELECT * FROM type WHERE id = ?  "
+
+CREATE_TYPE_QUERY = "INSERT INTO type (name) VALUES (?)"
+
+GET_CATEGORY_BY_ID_QUERY = "SELECT * FROM category WHERE id = ?  "
+
+CREATE_CATEGORY_QUERY = "INSERT INTO category (name) VALUES (?)"
+
 GET_CURRENT_USER_BALANCE_QUERY = "SELECT balance FROM user WHERE login = ?"
 
 DELETE_USER_QUERY = "DELETE FROM user WHERE login = ?)"
@@ -106,10 +126,10 @@ class CategoryRepository:
         self.cursor = self.connection.cursor()
 
     def create_category(self, category: Category):
-        self.cursor.execute("INSERT INTO category (name) VALUES (?)", (category.name,))
+        self.cursor.execute(CREATE_CATEGORY_QUERY, (category.name,))
 
-    def get_category_by_id(self, id:int):
-        self.cursor.execute("SELECT * FROM category WHERE id = ?  ", (id,))
+    def get_category_by_id(self, id: int):
+        self.cursor.execute(GET_CATEGORY_BY_ID_QUERY, (id,))
         result = self.cursor.fetchone()
 
         user = self.parse_category(result)
@@ -130,10 +150,10 @@ class TypeRepository:
         self.cursor = self.connection.cursor()
 
     def create_type(self, type: Type):
-        self.cursor.execute("INSERT INTO type (name) VALUES (?)", (type.name,))
+        self.cursor.execute(CREATE_TYPE_QUERY, (type.name,))
 
     def get_type_by_id(self, id):
-        self.cursor.execute("SELECT * FROM type WHERE id = ?  ", (id,))
+        self.cursor.execute(GET_TYPE_BY_ID_QUERY, (id,))
         result = self.cursor.fetchone()
 
         user = self.parse_type(result)
@@ -155,18 +175,18 @@ class TransactionRepository:
 
     def create_transaction(self, transaction: Transaction):
         self.cursor.execute(
-            "INSERT INTO transaction (amount, description, account_id, type_id, category_id) VALUES (?,?,?,?,?)",
+            CREATE_TRANSACTION_QUERY,
             (transaction.amount, transaction.description, transaction.account.id, transaction.type.id,
              transaction.category.id))
 
     def get_transaction_by_id(self, id):
-        self.cursor.execute("SELECT * FROM transaction WHERE id = ?", (id,))
+        self.cursor.execute(SELECT_TRANSACTION_BY_ID_QUERY, (id,))
         result = self.cursor.fetchone()
         transaction = self.parse_transaction(result)
         return transaction
 
-    def get_transactions_by_account(self,account: Account):
-        self.cursor.execute("SELECT * FROM transaction WHERE account_id = ?", (account.id,))
+    def get_transactions_by_account(self, account: Account):
+        self.cursor.execute(SELECT_TRANSACTIONS_BY_ACCOUNT_QUERY, (account.id,))
         result = self.cursor.fetchall()
         transactions = []
 
@@ -174,8 +194,8 @@ class TransactionRepository:
             transactions.append(self.parse_transaction(transaction))
         return transactions
 
-    def get_transactions_by_account_type(self,account: Account,type:Type):
-        self.cursor.execute("SELECT * FROM transaction WHERE account_id = ? and type_id = ?", (account.id,type.id,))
+    def get_transactions_by_account_type(self, account: Account, type: Type):
+        self.cursor.execute(SELECT_TRANSACTIONS_BY_ACCOUNT_TYPE_QUERY, (account.id, type.id,))
         result = self.cursor.fetchall()
         transactions = []
 
@@ -183,15 +203,15 @@ class TransactionRepository:
             transactions.append(self.parse_transaction(transaction))
         return transactions
 
-    def get_transactions_by_account_type_category(self,account: Account,type:Type,category:Category):
-        self.cursor.execute("SELECT * FROM transaction WHERE account_id = ? and type_id = ? and category_id = ? ", (account.id,type.id,category.id,))
+    def get_transactions_by_account_type_category(self, account: Account, type: Type, category: Category):
+        self.cursor.execute(SELECT_TRANSACTIONS_BY_ACCOUNT_TYPE_CATEGORY_QUERY,
+                            (account.id, type.id, category.id,))
         result = self.cursor.fetchall()
         transactions = []
 
         for transaction in result:
             transactions.append(self.parse_transaction(transaction))
         return transactions
-
 
     @staticmethod
     def parse_transaction(transaction: str):
