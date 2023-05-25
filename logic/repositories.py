@@ -3,6 +3,10 @@ from loguru import logger
 
 from logic.entities import User, Account, Category, Type, Transaction
 
+UPDATE_TYPE_QUERY = "UPDATE type SET name = ? WHERE id = ?"
+
+DELETE_TYPE_QUERY = "DELETE FROM type WHERE id = ?"
+
 UPDATE_CATEGORY_QUERY = "UPDATE category SET name = ? WHERE id = ?"
 
 DELETE_CATEGORY_QUERY = "DELETE FROM category  WHERE id = ?"
@@ -179,6 +183,12 @@ class TypeRepository:
         user = self.parse_type(result)
         logger.info(result)
         return user
+
+    def update_type(self, type:Type):
+        self.cursor.execute(UPDATE_TYPE_QUERY, (type.name, type.id,))
+
+    def delete_type(self, type:Type):
+        self.cursor.execute(DELETE_TYPE_QUERY, (type.id,))
 
     @staticmethod
     def parse_type(type: str):
