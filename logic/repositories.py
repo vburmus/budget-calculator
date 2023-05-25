@@ -9,14 +9,15 @@ class UserRepository:
         self.connection = DataSource.get_connection()
         self.cursor = self.connection.cursor()
 
-    def register_user(self, user):
-        return self.cursor.execute("INSERT INTO user (login, password) VALUES (?, ?)", (user.login, user.password))
+    def create_user(self, user):
+        return self.cursor.execute(CREATE_USER_QUERY, (user.login, user.password))
 
     def get_user_by_login(self, login):
-        self.cursor.execute("SELECT * FROM user WHERE login = ?", (login,))
+        self.cursor.execute(GET_USER_BY_LOGIN_QUERY, (login,))
+        result = self.cursor.fetchone()
 
-        user = self.cursor.fetchone()
-
+        user = self.parse_user(result)
+        logger.info(result)
         return user
 
     def get_current_user_balance(self, user):
