@@ -223,5 +223,5 @@ class TransactionRepository:
         category = category_repository.get_category_by_id(int(transaction[6]))
         type = type_repository.get_type_by_id(int(transaction[5]))
         account = account_repository.get_account_by_id(int(transaction[4]))
-        return Transaction(id=int(transaction[0]), amount=transaction[1], description=transaction[2],
+        return Transaction(id=int(transaction[0]), amount=float(transaction[1]), description=transaction[2],
                            date=transaction[3], account=account, type=type, category=category)
