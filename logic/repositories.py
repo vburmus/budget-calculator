@@ -29,7 +29,8 @@ class UserRepository:
         self.cursor = self.connection.cursor()
 
     def create_user(self, user: User):
-        return self.cursor.execute(CREATE_USER_QUERY, (user.login, user.password))
+
+        self.cursor.execute(CREATE_USER_QUERY, (user.login, user.password))
 
     def get_user_by_login(self, login):
         self.cursor.execute(GET_USER_BY_LOGIN_QUERY, (login,))
@@ -54,10 +55,10 @@ class UserRepository:
         return self.cursor.execute(DELETE_USER_QUERY, (user.login,))
 
     @staticmethod
-    def parse_user(user):
+    def parse_user(user:str):
         if user is None:
             return None
-        return User(id=user[0], login=user[1], password=user[2], balance=float(user[3]))
+        return User(id=int(user[0]), login=user[1], password=user[2], balance=float(user[3]))
 
 
 class AccountRepository:
@@ -90,12 +91,12 @@ class AccountRepository:
             account.name, account.description, account.user.id, account.balance, account.id,));
 
     @staticmethod
-    def parse_account(account: Account):
+    def parse_account(account: str):
         if account is None:
             return None
         user_repository = UserRepository()
         user = user_repository.get_user_by_id(account[4])
-        return Account(id=account[0], name=account[1], balance=account[2],
+        return Account(id=int(account[0]), name=account[1], balance=float(account[2]),
                        description=account[3], user=user)
 
 
