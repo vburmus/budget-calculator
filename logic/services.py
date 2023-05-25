@@ -13,12 +13,14 @@ class UserService:
 
         if not DataValidation.is_passwords_are_same(password, confirm_password):
             return False, "Passwords don't match"
-
+        logger.info(f"Passwords match")
         if self.is_user_exists(login):
             return False, "Such user has already been created"
         else:
+            logger.info(f"New user creation...")
             user = User(login=login, password=DataValidation.encode_password(password))
-            self.user_repository.register_user(user)
+            logger.info(f"Entity with login = {login} created")
+            self.user_repository.create_user(user)
         return True, "Successfully registered"
 
     def login_user(self, login, password):
