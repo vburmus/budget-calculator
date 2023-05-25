@@ -1,7 +1,7 @@
 from logic.datasource import DataSource
 from loguru import logger
 
-from logic.entities import User, Account
+from logic.entities import User, Account, Category
 
 GET_CURRENT_USER_BALANCE_QUERY = "SELECT balance FROM user WHERE login = ?"
 
@@ -28,7 +28,7 @@ class UserRepository:
         self.connection = DataSource.get_connection()
         self.cursor = self.connection.cursor()
 
-    def create_user(self, user):
+    def create_user(self, user: User):
         return self.cursor.execute(CREATE_USER_QUERY, (user.login, user.password))
 
     def get_user_by_login(self, login):
@@ -47,10 +47,10 @@ class UserRepository:
         logger.info(result)
         return user
 
-    def get_current_user_balance(self, user):
+    def get_current_user_balance(self, user: User):
         return self.cursor.execute(GET_CURRENT_USER_BALANCE_QUERY, (user.login,))
 
-    def delete_user(self, user):
+    def delete_user(self, user: User):
         return self.cursor.execute(DELETE_USER_QUERY, (user.login,))
 
     @staticmethod
@@ -66,11 +66,11 @@ class AccountRepository:
         self.connection = DataSource.get_connection()
         self.cursor = self.connection.cursor()
 
-    def create_new_account(self, account):
+    def create_new_account(self, account: Account):
         return self.cursor.execute(CREATE_ACCOUNT_QUERY,
-                                   (account.name, account.description, account.password, account.balance))
+                                   (account.name, account.description, account.balance, account.user.id))
 
-    def get_accounts_by_user(self, user):
+    def get_accounts_by_user(self, user: User):
         self.cursor.execute(GET_ACCOUNTS_BY_USER_QUERY, (user.id,))
         result = self.cursor.fetchall()
         accounts = []
@@ -85,12 +85,12 @@ class AccountRepository:
         account = self.parse_account(result)
         return account
 
-    def update_account(self, account):
+    def update_account(self, account: Account):
         self.cursor.execute(UPDATE_ACCOUNT_QUERY, (
-            account.name, account.description, account.user.id, account.balance,account.id,));
+            account.name, account.description, account.user.id, account.balance, account.id,));
 
     @staticmethod
-    def parse_account(account):
+    def parse_account(account: Account):
         if account is None:
             return None
         user_repository = UserRepository()
@@ -99,14 +99,32 @@ class AccountRepository:
                        description=account[3], user=user)
 
 
-class TransactionRepository:
+class СategoryRepository:
+    def __init__(self):
+        logger.add("logs/application.log", rotation="500 MB", level="INFO")
+        self.connection = DataSource.get_connection()
+        self.cursor = self.connection.cursor()
+
+    def create_category(self, category: Category):
+        self.cursor.execute("INSERT INTO category (name) VALUES (?)", (category.name,))
+
+    def get_category_by_id(self, id):
+        self.cursor.execute("SELECT * FROM category WHERE id = ?  ", (id,))
+        result = self.cursor.fetchone()
+
+        user = self.parse_user(result)
+        logger.info(result)
+        return user
+
+
+class TypeRepository:
     def __init__(self):
         logger.add("logs/application.log", rotation="500 MB", level="INFO")
         self.connection = DataSource.get_connection()
         self.cursor = self.connection.cursor()
 
 
-class СategoryRepository:
+class TransactionRepository:
     def __init__(self):
         logger.add("logs/application.log", rotation="500 MB", level="INFO")
         self.connection = DataSource.get_connection()
