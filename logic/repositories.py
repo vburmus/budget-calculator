@@ -129,6 +129,23 @@ class TypeRepository:
         self.connection = DataSource.get_connection()
         self.cursor = self.connection.cursor()
 
+    def create_type(self, type: Type):
+        self.cursor.execute("INSERT INTO type (name) VALUES (?)", (type.name,))
+
+    def get_type_by_id(self, id):
+        self.cursor.execute("SELECT * FROM type WHERE id = ?  ", (id,))
+        result = self.cursor.fetchone()
+
+        user = self.parse_type(result)
+        logger.info(result)
+        return user
+
+    @staticmethod
+    def parse_type(type: str):
+        if type is None:
+            return None
+        return Type(id=int(type[0]), name=type[1])
+
 
 class TransactionRepository:
     def __init__(self):
