@@ -3,6 +3,8 @@ from loguru import logger
 
 from logic.entities import User, Account, Category, Type, Transaction
 
+UPDATE_USER_QUERY = "UPDATE user SET login = ?, password = ? WHERE id = ?"
+
 SELECT_TRANSACTIONS_BY_ACCOUNT_TYPE_CATEGORY_QUERY = "SELECT * FROM transaction " \
                                                      "WHERE account_id = ? and type_id = ? and category_id = ? "
 
@@ -69,6 +71,9 @@ class UserRepository:
 
     def get_current_user_balance(self, user: User):
         return self.cursor.execute(GET_CURRENT_USER_BALANCE_QUERY, (user.login,))
+
+    def update_user(self, user: User):
+        self.cursor.execute(UPDATE_USER_QUERY, (user.id,))
 
     def delete_user(self, user: User):
         return self.cursor.execute(DELETE_USER_QUERY, (user.login,))
