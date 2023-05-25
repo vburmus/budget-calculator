@@ -3,6 +3,10 @@ from loguru import logger
 
 from logic.entities import User, Account, Category, Type, Transaction
 
+UPDATE_CATEGORY_QUERY = "UPDATE category SET name = ? WHERE id = ?"
+
+DELETE_CATEGORY_QUERY = "DELETE FROM category  WHERE id = ?"
+
 DELETE_ACCOUNT_QUERY = "DELETE FROM account WHERE id=? "
 
 UPDATE_USER_QUERY = "UPDATE user SET login = ?, password = ? WHERE id = ?"
@@ -145,6 +149,12 @@ class CategoryRepository:
         user = self.parse_category(result)
         logger.info(result)
         return user
+
+    def update_category(self, category: Category):
+        self.cursor.execute(UPDATE_CATEGORY_QUERY, (category.name, category.id,))
+
+    def delete_category(self, category: Category):
+        self.cursor.execute(DELETE_CATEGORY_QUERY, (category.id,))
 
     @staticmethod
     def parse_category(category: str):
