@@ -32,7 +32,7 @@ class UserRepository:
 
         self.cursor.execute(CREATE_USER_QUERY, (user.login, user.password))
 
-    def get_user_by_login(self, login):
+    def get_user_by_login(self, login:str):
         self.cursor.execute(GET_USER_BY_LOGIN_QUERY, (login,))
         result = self.cursor.fetchone()
 
@@ -40,7 +40,7 @@ class UserRepository:
         logger.info(result)
         return user
 
-    def get_user_by_id(self, id):
+    def get_user_by_id(self, id:int):
         self.cursor.execute(GET_USER_BY_ID_QUERY, (id,))
         result = self.cursor.fetchone()
 
@@ -80,7 +80,7 @@ class AccountRepository:
             accounts.append(self.parse_account(account))
         return accounts
 
-    def get_account_by_id(self, id):
+    def get_account_by_id(self, id:int):
         self.cursor.execute(GET_ACCOUNT_BY_ID_QUERY, (id,))
         result = self.cursor.fetchone()
         account = self.parse_account(result)
@@ -95,7 +95,7 @@ class AccountRepository:
         if account is None:
             return None
         user_repository = UserRepository()
-        user = user_repository.get_user_by_id(account[4])
+        user = user_repository.get_user_by_id(int(account[4]))
         return Account(id=int(account[0]), name=account[1], balance=float(account[2]),
                        description=account[3], user=user)
 
