@@ -1,7 +1,16 @@
+from abc import ABC, abstractmethod
+from enum import Enum
+from typing import TypeVar, Generic, Any, List
+
 from logic.datasource import DataSource
 from loguru import logger
 
 from logic.entities import User, Account, Category, Type, Transaction
+
+DELETE_TRANSACTION_QUERY = "DELETE FROM transaction WHERE id = ?"
+
+UPDATE_TRANSACTION_QUERY = "UPDATE transaction SET amount = ?, description = ?," \
+                           "date = CURRENT_TIMESTAMP,  type_id = ?, category_id = ? WHERE id = ?"
 
 UPDATE_TYPE_QUERY = "UPDATE type SET name = ? WHERE id = ?"
 
@@ -53,205 +62,230 @@ GET_ACCOUNT_BY_ID_QUERY = "SELECT * FROM account WHERE id = ?"
 
 UPDATE_ACCOUNT_QUERY = "UPDATE account SET name = ?, description = ?, user_id = ?, balance = ? WHERE  id = ?"
 
+LAST_ROW_QUERY = "SELECT * FROM '{}' ORDER BY id DESC LIMIT 1"
 
-class UserRepository:
+
+class ParamType(Enum):
+    ID = 1,
+    LOGIN = 2,
+    User = 3,
+
+
+T = TypeVar('T')
+
+
+class ARepository(Generic[T], ABC):
+
     def __init__(self):
         logger.add("logs/application.log", rotation="500 MB", level="INFO")
         self.connection = DataSource.get_connection()
         self.cursor = self.connection.cursor()
 
-    def create_user(self, user: User):
+    @abstractmethod
+    def create(self, item: T) -> T:
+        pass
+
+    @abstractmethod
+    def get_by_param(self, item: Any) -> T | List[T]:
+        pass
+
+    @abstractmethod
+    def update(self, item: T) -> T:
+        pass
+
+    @abstractmethod
+    def delete(self, item: T) -> None:
+        pass
+
+    def get_last_row(self, table) -> T:
+        self.cursor.execute(LAST_ROW_QUERY.format(table))
+        result = self.cursor.fetchone()
+        item = self.parse(result)
+        return item
+
+    @staticmethod
+    @abstractmethod
+    def parse(item_representation: str) -> T | None:
+        pass
+
+
+class UserRepository(ARepository[User]):
+
+    def create(self, user: User) -> User:
         self.cursor.execute(CREATE_USER_QUERY, (user.login, user.password))
+        return self.get_last_row("user")
 
-    def get_user_by_login(self, login: str):
-        self.cursor.execute(GET_USER_BY_LOGIN_QUERY, (login,))
+    def get_by_param(self, param: str | int) -> User | None:
+
+        if isinstance(param, int):
+            self.cursor.execute(GET_USER_BY_ID_QUERY, (param,))
+        elif isinstance(param, str):
+            self.cursor.execute(GET_USER_BY_LOGIN_QUERY, (param,))
+        else:
+            logger.error(f"There is no  such option for this type")
+            return None
         result = self.cursor.fetchone()
-
-        user = self.parse_user(result)
+        user = self.parse(result)
         logger.info(result)
         return user
 
-    def get_user_by_id(self, id: int):
-        self.cursor.execute(GET_USER_BY_ID_QUERY, (id,))
-        result = self.cursor.fetchone()
-
-        user = self.parse_user(result)
-        logger.info(result)
-        return user
-
-    def get_current_user_balance(self, user: User):
-        return self.cursor.execute(GET_CURRENT_USER_BALANCE_QUERY, (user.login,))
-
-    def update_user(self, user: User):
+    def update(self, user: User) -> User:
+        old_user = self.get_by_param(user.login)
         self.cursor.execute(UPDATE_USER_QUERY, (user.id,))
+        return self.get_by_param(old_user.id)
 
-    def delete_user(self, user: User):
+    def delete(self, user: User) -> None:
         return self.cursor.execute(DELETE_USER_QUERY, (user.login,))
 
     @staticmethod
-    def parse_user(user: str):
+    def parse(user: str) -> User | None:
         if user is None:
             return None
         return User(id=int(user[0]), login=user[1], password=user[2], balance=float(user[3]))
 
 
-class AccountRepository:
-    def __init__(self):
-        logger.add("logs/application.log", rotation="500 MB", level="INFO")
-        self.connection = DataSource.get_connection()
-        self.cursor = self.connection.cursor()
+class AccountRepository(ARepository[Account]):
 
-    def create_new_account(self, account: Account):
-        return self.cursor.execute(CREATE_ACCOUNT_QUERY,
-                                   (account.name, account.description, account.balance, account.user.id))
+    def create(self, account: Account) -> Account:
+        self.cursor.execute(CREATE_ACCOUNT_QUERY,
+                            (account.name, account.description, account.balance, account.user.id))
 
-    def get_accounts_by_user(self, user: User):
-        self.cursor.execute(GET_ACCOUNTS_BY_USER_QUERY, (user.id,))
-        result = self.cursor.fetchall()
-        accounts = []
+        return self.get_last_row("account")
 
-        for account in result:
-            accounts.append(self.parse_account(account))
-        return accounts
+    def get_by_param(self, item: User | int) -> Account | List[Account] | None:
+        if isinstance(item, User):
+            self.cursor.execute(GET_ACCOUNTS_BY_USER_QUERY, (item.id,))
+            result = self.cursor.fetchall()
+            accounts = []
 
-    def get_account_by_id(self, id: int):
-        self.cursor.execute(GET_ACCOUNT_BY_ID_QUERY, (id,))
+            for account in result:
+                accounts.append(self.parse(account))
+            return accounts
+        elif isinstance(item, int):
+            self.cursor.execute(GET_ACCOUNT_BY_ID_QUERY, (id,))
+        else:
+            logger.error(f"There is no such option for this type")
+            return None
         result = self.cursor.fetchone()
-        account = self.parse_account(result)
+        account = self.parse(result)
         return account
 
-    def update_account(self, account: Account):
+    def update(self, account: Account) -> Account:
         self.cursor.execute(UPDATE_ACCOUNT_QUERY, (
             account.name, account.description, account.user.id, account.balance, account.id,))
+        return self.get_by_param(account.id)
 
-    def delete_account(self, account: Account):
+    def delete(self, account: Account) -> None:
         self.cursor.execute(DELETE_ACCOUNT_QUERY, (account.id,))
 
     @staticmethod
-    def parse_account(account: str):
+    def parse(account: str) -> Account | None:
         if account is None:
             return None
         user_repository = UserRepository()
-        user = user_repository.get_user_by_id(int(account[4]))
+        user = user_repository.get_by_param(int(account[4]))
         return Account(id=int(account[0]), name=account[1], balance=float(account[2]),
                        description=account[3], user=user)
 
 
-class CategoryRepository:
-    def __init__(self):
-        logger.add("logs/application.log", rotation="500 MB", level="INFO")
-        self.connection = DataSource.get_connection()
-        self.cursor = self.connection.cursor()
+class CategoryRepository(ARepository[Category]):
 
-    def create_category(self, category: Category):
+    def create(self, category: Category) -> Category:
         self.cursor.execute(CREATE_CATEGORY_QUERY, (category.name,))
+        return self.get_last_row("category")
 
-    def get_category_by_id(self, id: int):
+    def get_by_param(self, id: int) -> Category:
         self.cursor.execute(GET_CATEGORY_BY_ID_QUERY, (id,))
         result = self.cursor.fetchone()
-
-        user = self.parse_category(result)
+        user = self.parse(result)
         logger.info(result)
         return user
 
-    def update_category(self, category: Category):
+    def update(self, category: Category) -> Category:
         self.cursor.execute(UPDATE_CATEGORY_QUERY, (category.name, category.id,))
+        return self.get_by_param(category.id)
 
-    def delete_category(self, category: Category):
+    def delete(self, category: Category) -> None:
         self.cursor.execute(DELETE_CATEGORY_QUERY, (category.id,))
 
     @staticmethod
-    def parse_category(category: str):
+    def parse(category: str) -> Category | None:
         if category is None:
             return None
         return Category(id=int(category[0]), name=category[1])
 
 
-class TypeRepository:
-    def __init__(self):
-        logger.add("logs/application.log", rotation="500 MB", level="INFO")
-        self.connection = DataSource.get_connection()
-        self.cursor = self.connection.cursor()
-
-    def create_type(self, type: Type):
+class TypeRepository(ARepository[Type]):
+    def create(self, type: Type) -> Type:
         self.cursor.execute(CREATE_TYPE_QUERY, (type.name,))
+        return self.get_last_row("type")
 
-    def get_type_by_id(self, id):
+    def get_by_param(self, item: int) -> Type:
         self.cursor.execute(GET_TYPE_BY_ID_QUERY, (id,))
         result = self.cursor.fetchone()
 
-        user = self.parse_type(result)
+        type = self.parse(result)
         logger.info(result)
-        return user
+        return type
 
-    def update_type(self, type:Type):
+    def update(self, type: Type) -> Type:
         self.cursor.execute(UPDATE_TYPE_QUERY, (type.name, type.id,))
+        return self.get_by_param(type.id)
 
-    def delete_type(self, type:Type):
+    def delete(self, type: Type) -> None:
         self.cursor.execute(DELETE_TYPE_QUERY, (type.id,))
 
     @staticmethod
-    def parse_type(type: str):
+    def parse(type: str) -> T | None:
         if type is None:
             return None
         return Type(id=int(type[0]), name=type[1])
 
 
-class TransactionRepository:
-    def __init__(self):
-        logger.add("logs/application.log", rotation="500 MB", level="INFO")
-        self.connection = DataSource.get_connection()
-        self.cursor = self.connection.cursor()
-
-    def create_transaction(self, transaction: Transaction):
+class TransactionRepository(ARepository[Transaction]):
+    def create(self, transaction: Transaction) -> Transaction:
         self.cursor.execute(
-            CREATE_TRANSACTION_QUERY,
-            (transaction.amount, transaction.description, transaction.account.id, transaction.type.id,
-             transaction.category.id))
+            CREATE_TRANSACTION_QUERY, (transaction.amount,
+                                       transaction.description,
+                                       transaction.account.id,
+                                       transaction.type.id,
+                                       transaction.category.id))
+        return self.get_last_row("transaction")
 
-    def get_transaction_by_id(self, id):
-        self.cursor.execute(SELECT_TRANSACTION_BY_ID_QUERY, (id,))
-        result = self.cursor.fetchone()
-        transaction = self.parse_transaction(result)
-        return transaction
+    def get_by_param(self, item: int | Account) -> Transaction | List[Transaction]:
+        if isinstance(item, int):
+            self.cursor.execute(SELECT_TRANSACTION_BY_ID_QUERY, (id,))
+            result = self.cursor.fetchone()
+            transaction = self.parse(result)
+            return transaction
+        elif isinstance(item, Account):
+            self.cursor.execute(SELECT_TRANSACTIONS_BY_ACCOUNT_QUERY, (item.id,))
+            result = self.cursor.fetchall()
+            transactions = []
 
-    def get_transactions_by_account(self, account: Account):
-        self.cursor.execute(SELECT_TRANSACTIONS_BY_ACCOUNT_QUERY, (account.id,))
-        result = self.cursor.fetchall()
-        transactions = []
+            for transaction in result:
+                transactions.append(self.parse(transaction))
+            return transactions
 
-        for transaction in result:
-            transactions.append(self.parse_transaction(transaction))
-        return transactions
+    def update(self, transaction: Transaction) -> Transaction:
+        self.cursor.execute(UPDATE_TRANSACTION_QUERY, (transaction.amount,
+                                                       transaction.description,
+                                                       transaction.type.id,
+                                                       transaction.category.id))
+        return self.get_by_param(transaction.id)
 
-    def get_transactions_by_account_type(self, account: Account, type: Type):
-        self.cursor.execute(SELECT_TRANSACTIONS_BY_ACCOUNT_TYPE_QUERY, (account.id, type.id,))
-        result = self.cursor.fetchall()
-        transactions = []
-
-        for transaction in result:
-            transactions.append(self.parse_transaction(transaction))
-        return transactions
-
-    def get_transactions_by_account_type_category(self, account: Account, type: Type, category: Category):
-        self.cursor.execute(SELECT_TRANSACTIONS_BY_ACCOUNT_TYPE_CATEGORY_QUERY,
-                            (account.id, type.id, category.id,))
-        result = self.cursor.fetchall()
-        transactions = []
-
-        for transaction in result:
-            transactions.append(self.parse_transaction(transaction))
-        return transactions
+    def delete(self, transaction: Transaction) -> None:
+        self.cursor.execute(DELETE_TRANSACTION_QUERY, (transaction.id,))
 
     @staticmethod
-    def parse_transaction(transaction: str):
+    def parse(transaction: str) -> Transaction | None:
         if transaction is None:
             return None
         category_repository = CategoryRepository()
         type_repository = TypeRepository()
         account_repository = AccountRepository()
-        category = category_repository.get_category_by_id(int(transaction[6]))
-        type = type_repository.get_type_by_id(int(transaction[5]))
-        account = account_repository.get_account_by_id(int(transaction[4]))
+        category = category_repository.get_by_param(int(transaction[6]))
+        type = type_repository.get_by_param(int(transaction[5]))
+        account = account_repository.get_by_param(int(transaction[4]))
         return Transaction(id=int(transaction[0]), amount=float(transaction[1]), description=transaction[2],
                            date=transaction[3], account=account, type=type, category=category)
