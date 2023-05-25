@@ -29,10 +29,9 @@ class UserRepository:
         self.cursor = self.connection.cursor()
 
     def create_user(self, user: User):
-
         self.cursor.execute(CREATE_USER_QUERY, (user.login, user.password))
 
-    def get_user_by_login(self, login:str):
+    def get_user_by_login(self, login: str):
         self.cursor.execute(GET_USER_BY_LOGIN_QUERY, (login,))
         result = self.cursor.fetchone()
 
@@ -40,7 +39,7 @@ class UserRepository:
         logger.info(result)
         return user
 
-    def get_user_by_id(self, id:int):
+    def get_user_by_id(self, id: int):
         self.cursor.execute(GET_USER_BY_ID_QUERY, (id,))
         result = self.cursor.fetchone()
 
@@ -55,7 +54,7 @@ class UserRepository:
         return self.cursor.execute(DELETE_USER_QUERY, (user.login,))
 
     @staticmethod
-    def parse_user(user:str):
+    def parse_user(user: str):
         if user is None:
             return None
         return User(id=int(user[0]), login=user[1], password=user[2], balance=float(user[3]))
@@ -80,7 +79,7 @@ class AccountRepository:
             accounts.append(self.parse_account(account))
         return accounts
 
-    def get_account_by_id(self, id:int):
+    def get_account_by_id(self, id: int):
         self.cursor.execute(GET_ACCOUNT_BY_ID_QUERY, (id,))
         result = self.cursor.fetchone()
         account = self.parse_account(result)
@@ -109,7 +108,7 @@ class CategoryRepository:
     def create_category(self, category: Category):
         self.cursor.execute("INSERT INTO category (name) VALUES (?)", (category.name,))
 
-    def get_category_by_id(self, id):
+    def get_category_by_id(self, id:int):
         self.cursor.execute("SELECT * FROM category WHERE id = ?  ", (id,))
         result = self.cursor.fetchone()
 
