@@ -9,20 +9,36 @@ class User:
         self._balance = balance
 
     @property
-    def id(self):
+    def id(self) -> int:
         return self._id
 
+    @id.setter
+    def id(self, new_id: int) -> None:
+        self._id = new_id
+
     @property
-    def login(self):
+    def login(self) -> str:
         return self._login
 
-    @property
-    def password(self):
-        return self._password
+    @login.setter
+    def login(self, new_login: str) -> None:
+        self._login = new_login
 
     @property
-    def balance(self):
+    def password(self) -> str:
+        return self._password
+
+    @password.setter
+    def password(self, new_password: str) -> None:
+        self._password = new_password
+
+    @property
+    def balance(self) -> float:
         return self._balance
+
+    @balance.setter
+    def balance(self, new_balance: float) -> None:
+        self._balance = new_balance
 
 
 class Account:
@@ -34,24 +50,44 @@ class Account:
         self._balance = balance
 
     @property
-    def id(self):
+    def id(self) -> int:
         return self._id
 
+    @id.setter
+    def id(self, new_id: int) -> None:
+        self._id = new_id
+
     @property
-    def name(self):
+    def name(self) -> str:
         return self._name
 
+    @name.setter
+    def name(self, new_name: str) -> None:
+        self._name = new_name
+
     @property
-    def description(self):
+    def description(self) -> str:
         return self._description
 
-    @property
-    def user(self):
-        return self._user
+    @description.setter
+    def description(self, new_description: str) -> None:
+        self._description = new_description
 
     @property
-    def balance(self):
+    def user(self) -> User:
+        return self._user
+
+    @user.setter
+    def user(self, new_user: User) -> None:
+        self._user = new_user
+
+    @property
+    def balance(self) -> float:
         return self._balance
+
+    @balance.setter
+    def balance(self, new_balance: float) -> None:
+        self._balance = new_balance
 
 
 class Type:
@@ -60,12 +96,20 @@ class Type:
         self._name = name
 
     @property
-    def id(self):
+    def id(self) -> int:
         return self._id
 
     @property
-    def name(self):
+    def name(self) -> str:
         return self._name
+
+    @id.setter
+    def id(self, new_id: int) -> None:
+        self._id = new_id
+
+    @name.setter
+    def name(self, new_name: str) -> None:
+        self._name = new_name
 
 
 class Category:
@@ -74,12 +118,20 @@ class Category:
         self._name = name
 
     @property
-    def id(self):
+    def id(self) -> int:
         return self._id
 
     @property
-    def name(self):
+    def name(self) -> str:
         return self._name
+
+    @id.setter
+    def id(self, new_id: int) -> None:
+        self._id = new_id
+
+    @name.setter
+    def name(self, new_name: str) -> None:
+        self._name = new_name
 
 
 class Transaction:
@@ -94,33 +146,62 @@ class Transaction:
         self._description = description
 
     @property
-    def id(self):
+    def id(self) -> int:
         return self._id
 
+    @id.setter
+    def id(self, new_id: int) -> None:
+        self._id = new_id
+
     @property
-    def amount(self):
+    def amount(self) -> float:
         return self._amount
 
+    @amount.setter
+    def amount(self, new_amount: float) -> None:
+        self._amount = new_amount
+
     @property
-    def account(self):
+    def account(self) -> Account:
         return self._account
 
+    @account.setter
+    def account(self, new_account: Account) -> None:
+        self._account = new_account
+
     @property
-    def description(self):
+    def description(self) -> str:
         return self._description
 
+    @description.setter
+    def description(self, new_description: str) -> None:
+        self._description = new_description
+
     @property
-    def date(self):
+    def date(self) -> datetime:
         return self._date
 
-    @property
-    def type(self):
-        return self._type
+    @date.setter
+    def date(self, new_date: datetime) -> None:
+        self._date = new_date
 
     @property
-    def category(self):
+    def type(self) -> Type:
+        return self._type
+
+    @type.setter
+    def type(self, new_type: Type) -> None:
+        self._type = new_type
+
+    @property
+    def category(self) -> Category:
         return self._category
+
+    @category.setter
+    def category(self, new_category: Category) -> None:
+        self._category = new_category
 
     @property
     def user(self):
         return self._account.user
+
