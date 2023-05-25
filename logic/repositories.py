@@ -3,6 +3,8 @@ from loguru import logger
 
 from logic.entities import User, Account, Category, Type, Transaction
 
+DELETE_ACCOUNT_QUERY = "DELETE FROM account WHERE id=? "
+
 UPDATE_USER_QUERY = "UPDATE user SET login = ?, password = ? WHERE id = ?"
 
 SELECT_TRANSACTIONS_BY_ACCOUNT_TYPE_CATEGORY_QUERY = "SELECT * FROM transaction " \
@@ -112,7 +114,10 @@ class AccountRepository:
 
     def update_account(self, account: Account):
         self.cursor.execute(UPDATE_ACCOUNT_QUERY, (
-            account.name, account.description, account.user.id, account.balance, account.id,));
+            account.name, account.description, account.user.id, account.balance, account.id,))
+
+    def delete_account(self, account: Account):
+        self.cursor.execute(DELETE_ACCOUNT_QUERY, (account.id,))
 
     @staticmethod
     def parse_account(account: str):
