@@ -1,6 +1,25 @@
 from logic.datasource import DataSource
-from logic.entities import User
 from loguru import logger
+
+from logic.entities import User, Account
+
+GET_CURRENT_USER_BALANCE_QUERY = "SELECT balance FROM user WHERE login = ?"
+
+DELETE_USER_QUERY = "DELETE FROM user WHERE login = ?)"
+
+GET_USER_BY_ID_QUERY = "SELECT * FROM user WHERE id = ?"
+
+GET_USER_BY_LOGIN_QUERY = "SELECT * FROM user WHERE login = ?"
+
+CREATE_USER_QUERY = "INSERT INTO user (login, password) VALUES (?, ?)"
+
+CREATE_ACCOUNT_QUERY = "INSERT INTO account (name,description, balance, user_id) VALUES (?, ?, ?, ?)"
+
+GET_ACCOUNTS_BY_USER_QUERY = "SELECT * FROM account where user_id = ?"
+
+GET_ACCOUNT_BY_ID_QUERY = "SELECT * FROM account WHERE id = ?"
+
+UPDATE_ACCOUNT_QUERY = "UPDATE account SET name = ?, description = ?, user_id = ?, balance = ? WHERE  id = ?"
 
 
 class UserRepository:
