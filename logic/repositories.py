@@ -152,3 +152,56 @@ class TransactionRepository:
         logger.add("logs/application.log", rotation="500 MB", level="INFO")
         self.connection = DataSource.get_connection()
         self.cursor = self.connection.cursor()
+
+    def create_transaction(self, transaction: Transaction):
+        self.cursor.execute(
+            "INSERT INTO transaction (amount, description, account_id, type_id, category_id) VALUES (?,?,?,?,?)",
+            (transaction.amount, transaction.description, transaction.account.id, transaction.type.id,
+             transaction.category.id))
+
+    def get_transaction_by_id(self, id):
+        self.cursor.execute("SELECT * FROM transaction WHERE id = ?", (id,))
+        result = self.cursor.fetchone()
+        transaction = self.parse_transaction(result)
+        return transaction
+
+    def get_transactions_by_account(self,account: Account):
+        self.cursor.execute("SELECT * FROM transaction WHERE account_id = ?", (account.id,))
+        result = self.cursor.fetchall()
+        transactions = []
+
+        for transaction in result:
+            transactions.append(self.parse_transaction(transaction))
+        return transactions
+
+    def get_transactions_by_account_type(self,account: Account,type:Type):
+        self.cursor.execute("SELECT * FROM transaction WHERE account_id = ? and type_id = ?", (account.id,type.id,))
+        result = self.cursor.fetchall()
+        transactions = []
+
+        for transaction in result:
+            transactions.append(self.parse_transaction(transaction))
+        return transactions
+
+    def get_transactions_by_account_type_category(self,account: Account,type:Type,category:Category):
+        self.cursor.execute("SELECT * FROM transaction WHERE account_id = ? and type_id = ? and category_id = ? ", (account.id,type.id,category.id,))
+        result = self.cursor.fetchall()
+        transactions = []
+
+        for transaction in result:
+            transactions.append(self.parse_transaction(transaction))
+        return transactions
+
+
+    @staticmethod
+    def parse_transaction(transaction: str):
+        if transaction is None:
+            return None
+        category_repository = CategoryRepository()
+        type_repository = TypeRepository()
+        account_repository = AccountRepository()
+        category = category_repository.get_category_by_id(int(transaction[6]))
+        type = type_repository.get_type_by_id(int(transaction[5]))
+        account = account_repository.get_account_by_id(int(transaction[4]))
+        return Transaction(id=int(transaction[0]), amount=transaction[1], description=transaction[2],
+                           date=transaction[3], account=account, type=type, category=category)
