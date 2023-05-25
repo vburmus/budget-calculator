@@ -1,7 +1,7 @@
 from logic.datasource import DataSource
 from loguru import logger
 
-from logic.entities import User, Account, Category
+from logic.entities import User, Account, Category, Type, Transaction
 
 GET_CURRENT_USER_BALANCE_QUERY = "SELECT balance FROM user WHERE login = ?"
 
@@ -100,7 +100,7 @@ class AccountRepository:
                        description=account[3], user=user)
 
 
-class СategoryRepository:
+class CategoryRepository:
     def __init__(self):
         logger.add("logs/application.log", rotation="500 MB", level="INFO")
         self.connection = DataSource.get_connection()
@@ -113,7 +113,7 @@ class СategoryRepository:
         self.cursor.execute("SELECT * FROM category WHERE id = ?  ", (id,))
         result = self.cursor.fetchone()
 
-        user = self.parse_user(result)
+        user = self.parse_category(result)
         logger.info(result)
         return user
 
