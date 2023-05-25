@@ -116,6 +116,12 @@ class CategoryRepository:
         logger.info(result)
         return user
 
+    @staticmethod
+    def parse_category(category: str):
+        if category is None:
+            return None
+        return Category(id=int(category[0]), name=category[1])
+
 
 class TypeRepository:
     def __init__(self):
