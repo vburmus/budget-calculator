@@ -1,12 +1,16 @@
-from logic.repositories import UserRepository, AccountRepository, CategoryRepository
+from typing import List
+
+from logic.repositories import UserRepository, AccountRepository, CategoryRepository, UserHasCategoryRepository
 from loguru import logger
 from logic.datavalidation import DataValidation
-from logic.entities import User, Account, Category
+from logic.entities import User, Account, Category, UserCategory
 
 
 class UserService:
     def __init__(self):
         self.user_repository = UserRepository()
+        self.user_category_repository = UserHasCategoryRepository()
+        self.category_service = CategoryService()
 
     def register(self, login: str, password: str, confirm_password: str):
         logger.info(f"User with login {login} wants to register")
@@ -79,6 +83,35 @@ class UserService:
         else:
             return False
 
+    def get_user_categories(self, user: User) -> List[Category]:
+        logger.info("Getting user repositories...")
+        return self.user_category_repository.get_by_param(user)
+
+    def is_user_has_category(self, user: User, category: Category) -> bool:
+        user_categories_names = [category.name for category in self.get_user_categories(user)]
+        if category.name in any(user_categories_names):
+            return True
+        else:
+            return False
+
+    def add_category_user(self, user: User, category: Category):
+        if self.is_user_has_category(user, category):
+            return False, f"Category {category.name} exists"
+        if self.category_service.is_category_exist(category.name):
+            return True, self.user_category_repository.create(
+                UserCategory(user=user, category=category))
+        else:
+            success, message = self.category_service.create(category.name)
+            if success:
+                return True, self.user_category_repository.create(UserCategory(user=user, category=success))
+            return False, message
+
+    #TODO
+    def delete_category_from_user(self, user: User, category: Category):
+        if not self.is_user_has_category(user=user, category=category):
+            return False, "Wrong category"
+        return True, f"Successfully deleted {category.name}"
+
 
 class AccountService:
 
@@ -124,8 +157,8 @@ class AccountService:
         return True, f"Account {account.name} successfully deleted"
 
     def is_account_exists(self, name: str, user: User) -> bool:
-        accounts = self.account_repository.get_by_param(user)
-        if name in any(accounts.name):
+        user_accounts_names = [account.name for account in self.account_repository.get_by_param(user)]
+        if name in any(user_accounts_names):
             return True
         else:
             return False
