@@ -60,8 +60,21 @@
     </font>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color: rgba(255, 255, 255, 0);
-color: rgb(255, 255, 255);</string>
+    <string notr="true">QLineEdit{
+	background-color: rgba(255, 255, 255, 0);
+	border: 2px solid rgb(255, 255, 255);
+	border-radius: 8px;
+	color: white; 
+}
+
+QLineEdit:focus{
+	background-color: rgba(255, 255, 255, 0);
+	border: 2px solid  rgb(255, 0, 255);
+	border-radius: 8px;
+	color: white; 
+}
+
+</string>
    </property>
    <property name="text">
     <string/>
@@ -91,7 +104,22 @@ color: rgb(255, 255, 255);</string>
     </font>
    </property>
    <property name="styleSheet">
-    <string notr="true"/>
+    <string notr="true">QPushButton{
+	border-radius: 8px;
+	background-color: rgb(255, 255, 255);
+}
+
+QPushButton:hover{
+	border-radius: 8px;
+	background-color:  rgb(148, 17, 255);
+	color: white;
+}
+
+QPushButton:pressed{
+	border-radius: 8px;
+	background-color: rgb(187, 26, 202);
+	color: white;
+}</string>
    </property>
    <property name="text">
     <string>Sign In</string>
@@ -115,8 +143,22 @@ color: rgb(255, 255, 255);</string>
     </font>
    </property>
    <property name="styleSheet">
-    <string notr="true">border-color: rgb(255, 170, 255);
-</string>
+    <string notr="true">QPushButton{
+	border-radius: 8px;
+	background-color: rgb(255, 255, 255);
+}
+
+QPushButton:hover{
+	border-radius: 8px;
+	background-color:  rgb(148, 17, 255);
+	color: white;
+}
+
+QPushButton:pressed{
+	border-radius: 8px;
+	background-color: rgb(187, 26, 202);
+	color: white;
+}</string>
    </property>
    <property name="text">
     <string>Sign Up</string>
@@ -138,8 +180,21 @@ color: rgb(255, 255, 255);</string>
     </font>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color: rgba(255, 255, 255, 0);
-color: rgb(255, 255, 255);</string>
+    <string notr="true">QLineEdit{
+	background-color: rgba(255, 255, 255, 0);
+	border: 2px solid rgb(255, 255, 255);
+	border-radius: 8px;
+	color: white; 
+}
+
+QLineEdit:focus{
+	background-color: rgba(255, 255, 255, 0);
+	border: 2px solid  rgb(255, 0, 255);
+	border-radius: 8px;
+	color: white; 
+}
+
+</string>
    </property>
    <property name="text">
     <string/>
