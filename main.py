@@ -134,7 +134,6 @@ class UserSettingsPage(QWidget):
         self.userName.setText(user.login)
         self.userNameTextEdit.setPlaceholderText(user.login)
 
-
     def exit(self):
         mainWindow = MainPage(self.user)
         widget.addWidget(mainWindow)
