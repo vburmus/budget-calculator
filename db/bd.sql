@@ -56,15 +56,8 @@ DEFAULT CHARACTER SET = utf8mb3;
 CREATE TABLE IF NOT EXISTS `mydb`.`category` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
-  `user_id` BIGINT NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
-  INDEX `fk_category_user1_idx` (`user_id` ASC) VISIBLE,
-  CONSTRAINT `fk_category_user1`
-    FOREIGN KEY (`user_id`)
-    REFERENCES `mydb`.`user` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
 ENGINE = InnoDB
 AUTO_INCREMENT = 9
 DEFAULT CHARACTER SET = utf8mb3;
@@ -94,6 +87,29 @@ CREATE TABLE IF NOT EXISTS `mydb`.`transaction` (
     REFERENCES `mydb`.`category` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`user_has_category`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`user_has_category` (
+  `user_id` BIGINT NOT NULL,
+  `category_id` BIGINT NOT NULL,
+  PRIMARY KEY (`user_id`, `category_id`),
+  INDEX `fk_user_has_category_category1_idx` (`category_id` ASC) VISIBLE,
+  INDEX `fk_user_has_category_user1_idx` (`user_id` ASC) VISIBLE,
+  CONSTRAINT `fk_user_has_category_user1`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `mydb`.`user` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_user_has_category_category1`
+    FOREIGN KEY (`category_id`)
+    REFERENCES `mydb`.`category` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb3;
 
