@@ -57,7 +57,7 @@ GET_ACCOUNT_BY_ID_QUERY = "SELECT * FROM account WHERE id = ?"
 
 UPDATE_ACCOUNT_QUERY = "UPDATE account SET name = ?, description = ?, user_id = ?, balance = ? WHERE  id = ?"
 
-LAST_ROW_QUERY = "SELECT * FROM '{}' ORDER BY id DESC LIMIT 1"
+LAST_ROW_QUERY = "SELECT * FROM {} ORDER BY id DESC LIMIT 1"
 
 
 class ParamType(Enum):
