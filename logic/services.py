@@ -174,4 +174,3 @@ class CategoryService:
             return True
         else:
             return False
-

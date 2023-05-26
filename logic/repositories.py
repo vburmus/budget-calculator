@@ -251,7 +251,7 @@ class UserHasCategoryRepository(ARepository[UserCategory]):
         category_repository = CategoryRepository()
         user = user_repository.get_by_param(int(item_representation[0]))
         category = category_repository.get_by_param(int(item_representation[1]))
-        return Category(user=user,category=category)
+        return UserCategory(user=user, category=category)
 
 
 class TransactionRepository(ARepository[Transaction]):
