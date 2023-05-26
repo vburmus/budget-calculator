@@ -56,7 +56,6 @@ class UserService:
     def update(self, user: User, given_password: str, login: str = None, password: str = None):
         bd_user = self.get_user_by_id(user.id)
         logger.info(f"Update user {user.login}...")
-        logger.info(f"{DataValidation.encode_password(given_password)} == {user.password}")
         if not DataValidation.is_password_valid(bd_user.password,
                                                 given_password):
             return False, "Given password is wrong"
