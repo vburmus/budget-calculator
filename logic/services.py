@@ -49,20 +49,29 @@ class UserService:
     # WARNING TYPE IF FALSE
     # if we can update we return True + user
     # if not -> false + message
-    def update(self, user: User, login: str = None, password: str = None):
+    def update(self, user: User, given_password: str, login: str = None, password: str = None):
+        bd_user = self.get_user_by_id(user.id)
         logger.info(f"Update user {user.login}...")
-        if login == user.login:
-            return False, "Credentials must be changed to update"
-
+        logger.info(f"{DataValidation.encode_password(given_password)} == {user.password}")
+        if not DataValidation.is_password_valid(bd_user.password,
+                                                given_password):
+            return False, "Given password is wrong"
         if login:
+            if login == user.login:
+                return False, "Credentials must be changed to update"
             if self.is_user_exists(login):
                 return False, "Such login is unavailable"
             user.login = login
             logger.info("Login updated")
         if password:
+            if DataValidation.is_password_valid(bd_user.password,
+                                                password):
+                return False, "Credentials must be changed to update"
             user.password = DataValidation.encode_password(password)
             logger.info("Password updated")
-        return True, self.user_repository.update(user)
+        if login or password:
+            return True, self.user_repository.update(user)
+        return False, "Empty credentials"
 
     # +- -||- HANDLE LOGS!
     def delete(self, user: User):
@@ -85,7 +94,12 @@ class AccountService:
     def __init__(self):
         self.account_repository = AccountRepository()
 
-    def create(self, name: str, user: User, balance: float = 0.0, description: str = ""):
+    def create(self, name: str, user: User, balance: str = None, description: str = ""):
+        # if balance:
+        #     if balance.isnumeric() and:
+        #         current = float(balance)
+        #     else:
+        #         return False, f"Wrong format of balance"
         logger.info(f"Creating account with name {name}...")
         if self.is_account_exists(name, user):
             return False, f"Account {name} exists"

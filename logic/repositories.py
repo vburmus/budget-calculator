@@ -125,9 +125,9 @@ class UserRepository(ARepository[User]):
         return user
 
     def update(self, user: User) -> User:
-        old_user = self.get_by_param(user.login)
-        self.cursor.execute(UPDATE_USER_QUERY, (user.id,))
-        return self.get_by_param(old_user.id)
+        self.cursor.execute(UPDATE_USER_QUERY, (user.login, user.password
+                                                , user.id,))
+        return self.get_by_param(user.id)
 
     def delete(self, user: User) -> None:
         return self.cursor.execute(DELETE_USER_QUERY, (user.login,))
