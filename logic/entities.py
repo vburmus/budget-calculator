@@ -90,26 +90,6 @@ class Account:
         self._balance = new_balance
 
 
-class Type:
-    def __init__(self, id: int = 1, name: str = 'income'):
-        self._id = id
-        self._name = name
-
-    @property
-    def id(self) -> int:
-        return self._id
-
-    @property
-    def name(self) -> str:
-        return self._name
-
-    @id.setter
-    def id(self, new_id: int) -> None:
-        self._id = new_id
-
-    @name.setter
-    def name(self, new_name: str) -> None:
-        self._name = new_name
 
 
 class Category:
@@ -136,12 +116,11 @@ class Category:
 
 class Transaction:
     def __init__(self, amount: float, account: Account, id: int = None, description: str = None,
-                 date: datetime = datetime.datetime.now(), type: Type = Type(), category: Category = None) -> None:
+                 date: datetime = datetime.datetime.now(), category: Category = None) -> None:
         self._id = id
         self._account = account
         self._amount = amount
         self._date = date
-        self._type = type
         self._category = category
         self._description = description
 
@@ -185,13 +164,6 @@ class Transaction:
     def date(self, new_date: datetime) -> None:
         self._date = new_date
 
-    @property
-    def type(self) -> Type:
-        return self._type
-
-    @type.setter
-    def type(self, new_type: Type) -> None:
-        self._type = new_type
 
     @property
     def category(self) -> Category:

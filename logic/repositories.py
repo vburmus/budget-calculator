@@ -5,16 +5,12 @@ from typing import TypeVar, Generic, Any, List
 from logic.datasource import DataSource
 from loguru import logger
 
-from logic.entities import User, Account, Category, Type, Transaction
+from logic.entities import User, Account, Category, Transaction
 
 DELETE_TRANSACTION_QUERY = "DELETE FROM transaction WHERE id = ?"
 
 UPDATE_TRANSACTION_QUERY = "UPDATE transaction SET amount = ?, description = ?," \
-                           "date = CURRENT_TIMESTAMP,  type_id = ?, category_id = ? WHERE id = ?"
-
-UPDATE_TYPE_QUERY = "UPDATE type SET name = ? WHERE id = ?"
-
-DELETE_TYPE_QUERY = "DELETE FROM type WHERE id = ?"
+                           "date = CURRENT_TIMESTAMP, category_id = ? WHERE id = ?"
 
 UPDATE_CATEGORY_QUERY = "UPDATE category SET name = ? WHERE id = ?"
 
@@ -24,24 +20,15 @@ DELETE_ACCOUNT_QUERY = "DELETE FROM account WHERE id=? "
 
 UPDATE_USER_QUERY = "UPDATE user SET login = ?, password = ? WHERE id = ?"
 
-SELECT_TRANSACTIONS_BY_ACCOUNT_TYPE_CATEGORY_QUERY = "SELECT * FROM transaction " \
-                                                     "WHERE account_id = ? and type_id = ? and category_id = ? "
-
-SELECT_TRANSACTIONS_BY_ACCOUNT_TYPE_QUERY = "SELECT * FROM transaction WHERE account_id = ? and type_id = ?"
-
 SELECT_TRANSACTIONS_BY_ACCOUNT_QUERY = "SELECT * FROM transaction WHERE account_id = ?"
 
 SELECT_TRANSACTION_BY_ID_QUERY = "SELECT * FROM transaction WHERE id = ?"
 
 CREATE_TRANSACTION_QUERY = "INSERT INTO transaction" \
-                           " (amount, description, account_id, type_id, category_id) VALUES (?,?,?,?,?)"
-
-GET_TYPE_BY_ID_QUERY = "SELECT * FROM type WHERE id = ?  "
-
-CREATE_TYPE_QUERY = "INSERT INTO type (name) VALUES (?)"
+                           " (amount, description, account_id, category_id) VALUES (?,?,?,?,?)"
 
 GET_CATEGORY_BY_ID_QUERY = "SELECT * FROM category WHERE id = ?  "
-
+GET_CATEGORY_BY_NAME_QUERY = "SELECT * FROM category WHERE name = ?  "
 CREATE_CATEGORY_QUERY = "INSERT INTO category (name) VALUES (?)"
 
 GET_CURRENT_USER_BALANCE_QUERY = "SELECT balance FROM user WHERE login = ?"
@@ -194,12 +181,17 @@ class CategoryRepository(ARepository[Category]):
         self.cursor.execute(CREATE_CATEGORY_QUERY, (category.name,))
         return self.get_last_row("category")
 
-    def get_by_param(self, id: int) -> Category:
-        self.cursor.execute(GET_CATEGORY_BY_ID_QUERY, (id,))
+    def get_by_param(self, item: int | str) -> Category | None:
+        if isinstance(item, int):
+            self.cursor.execute(GET_CATEGORY_BY_ID_QUERY, (item,))
+        elif isinstance(item, str):
+            self.cursor.execute(GET_CATEGORY_BY_NAME_QUERY, (item,))
+        else:
+            logger.error(f"There is no such option for this type")
         result = self.cursor.fetchone()
-        user = self.parse(result)
+        category = self.parse(result)
         logger.info(result)
-        return user
+        return category
 
     def update(self, category: Category) -> Category:
         self.cursor.execute(UPDATE_CATEGORY_QUERY, (category.name, category.id,))
@@ -215,40 +207,12 @@ class CategoryRepository(ARepository[Category]):
         return Category(id=int(category[0]), name=category[1])
 
 
-class TypeRepository(ARepository[Type]):
-    def create(self, type: Type) -> Type:
-        self.cursor.execute(CREATE_TYPE_QUERY, (type.name,))
-        return self.get_last_row("type")
-
-    def get_by_param(self, item: int) -> Type:
-        self.cursor.execute(GET_TYPE_BY_ID_QUERY, (id,))
-        result = self.cursor.fetchone()
-
-        type = self.parse(result)
-        logger.info(result)
-        return type
-
-    def update(self, type: Type) -> Type:
-        self.cursor.execute(UPDATE_TYPE_QUERY, (type.name, type.id,))
-        return self.get_by_param(type.id)
-
-    def delete(self, type: Type) -> None:
-        self.cursor.execute(DELETE_TYPE_QUERY, (type.id,))
-
-    @staticmethod
-    def parse(type: str) -> T | None:
-        if type is None:
-            return None
-        return Type(id=int(type[0]), name=type[1])
-
-
 class TransactionRepository(ARepository[Transaction]):
     def create(self, transaction: Transaction) -> Transaction:
         self.cursor.execute(
             CREATE_TRANSACTION_QUERY, (transaction.amount,
                                        transaction.description,
                                        transaction.account.id,
-                                       transaction.type.id,
                                        transaction.category.id))
         return self.get_last_row("transaction")
 
@@ -270,7 +234,6 @@ class TransactionRepository(ARepository[Transaction]):
     def update(self, transaction: Transaction) -> Transaction:
         self.cursor.execute(UPDATE_TRANSACTION_QUERY, (transaction.amount,
                                                        transaction.description,
-                                                       transaction.type.id,
                                                        transaction.category.id))
         return self.get_by_param(transaction.id)
 
@@ -282,10 +245,10 @@ class TransactionRepository(ARepository[Transaction]):
         if transaction is None:
             return None
         category_repository = CategoryRepository()
-        type_repository = TypeRepository()
+
         account_repository = AccountRepository()
-        category = category_repository.get_by_param(int(transaction[6]))
-        type = type_repository.get_by_param(int(transaction[5]))
+        category = category_repository.get_by_param(int(transaction[5]))
+
         account = account_repository.get_by_param(int(transaction[4]))
         return Transaction(id=int(transaction[0]), amount=float(transaction[1]), description=transaction[2],
-                           date=transaction[3], account=account, type=type, category=category)
+                           date=transaction[3], account=account, category=category)
