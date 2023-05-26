@@ -41,6 +41,42 @@ class User:
         self._balance = new_balance
 
 
+class Category:
+    def __init__(self, name: str, id: int = None):
+        self._id = id
+        self._name = name
+
+    @property
+    def id(self) -> int:
+        return self._id
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @id.setter
+    def id(self, new_id: int) -> None:
+        self._id = new_id
+
+    @name.setter
+    def name(self, new_name: str) -> None:
+        self._name = new_name
+
+
+class UserCategory:
+    def __init__(self, user: User, category: Category):
+        self._user = user
+        self._category = category
+
+    @property
+    def user(self) -> User:
+        return self._user
+
+    @property
+    def category(self) -> Category:
+        return self._category
+
+
 class Account:
     def __init__(self, name: str, user: User, balance: float = 0.0, id: int = None, description: str = None) -> None:
         self._id = id
@@ -88,30 +124,6 @@ class Account:
     @balance.setter
     def balance(self, new_balance: float) -> None:
         self._balance = new_balance
-
-
-
-
-class Category:
-    def __init__(self, name: str, id: int = None):
-        self._id = id
-        self._name = name
-
-    @property
-    def id(self) -> int:
-        return self._id
-
-    @property
-    def name(self) -> str:
-        return self._name
-
-    @id.setter
-    def id(self, new_id: int) -> None:
-        self._id = new_id
-
-    @name.setter
-    def name(self, new_name: str) -> None:
-        self._name = new_name
 
 
 class Transaction:
@@ -164,7 +176,6 @@ class Transaction:
     def date(self, new_date: datetime) -> None:
         self._date = new_date
 
-
     @property
     def category(self) -> Category:
         return self._category
@@ -176,4 +187,3 @@ class Transaction:
     @property
     def user(self):
         return self._account.user
-

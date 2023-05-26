@@ -5,7 +5,15 @@ from typing import TypeVar, Generic, Any, List
 from logic.datasource import DataSource
 from loguru import logger
 
-from logic.entities import User, Account, Category, Transaction
+from logic.entities import User, Account, Category, Transaction, UserCategory
+
+CREATE_NEW_CATEGORY_QUERY = "insert into user_has_category (user_id, category_id) values (?,?)"
+
+SELECT_USERS_CATEGORIES_QUERY = "select * from user_has_repository where user_id = ?"
+
+SELECT_CATEGORY_USERS_QUERY = "select * from user_has_repository where category_id = ?"
+
+DELETE_USER_HAS_CATEGORY_QUERY = "delete from user_has_repository where user_id = ? and category_id =?"
 
 DELETE_TRANSACTION_QUERY = "DELETE FROM transaction WHERE id = ?"
 
@@ -205,6 +213,45 @@ class CategoryRepository(ARepository[Category]):
         if category is None:
             return None
         return Category(id=int(category[0]), name=category[1])
+
+
+class UserHasCategoryRepository(ARepository[UserCategory]):
+
+    def create(self, user_category: UserCategory) -> UserCategory:
+        self.cursor.execute(CREATE_NEW_CATEGORY_QUERY,
+                            (user_category.user.id, user_category.category.id))
+        return self.get_last_row("user_has_category")
+
+    def get_by_param(self, item: User | Category) -> List[UserCategory]:
+        if isinstance(item, User):
+            self.cursor.execute(SELECT_USERS_CATEGORIES_QUERY, (item.id,))
+        elif isinstance(item, Category):
+            self.cursor.execute(SELECT_CATEGORY_USERS_QUERY, (item.id,))
+        else:
+            logger.error(f"There is no such option for this type")
+        result = self.cursor.fetchall()
+        user_has_category = []
+        for user_category in result:
+            user_has_category.append(self.parse(user_category))
+        return user_has_category
+
+    def update(self, item: T) -> T:
+        logger.error(f"There is no such option for this type")
+        return None
+
+    def delete(self, user_category: UserCategory) -> None:
+        self.cursor.execute(DELETE_USER_HAS_CATEGORY_QUERY,
+                            (user_category.user.id, user_category.category.id))
+
+    @staticmethod
+    def parse(item_representation: str) -> T | None:
+        if item_representation is None:
+            return None
+        user_repository = UserRepository()
+        category_repository = CategoryRepository()
+        user = user_repository.get_by_param(int(item_representation[0]))
+        category = category_repository.get_by_param(int(item_representation[1]))
+        return Category(user=user,category=category)
 
 
 class TransactionRepository(ARepository[Transaction]):
