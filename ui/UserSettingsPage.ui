@@ -143,9 +143,9 @@ QPushButton:pressed{
   <widget class="QLineEdit" name="userNameTextEdit">
    <property name="geometry">
     <rect>
-     <x>150</x>
+     <x>130</x>
      <y>250</y>
-     <width>241</width>
+     <width>281</width>
      <height>41</height>
     </rect>
    </property>
@@ -206,9 +206,9 @@ QLineEdit:focus{
   <widget class="QLineEdit" name="passwordText">
    <property name="geometry">
     <rect>
-     <x>150</x>
+     <x>130</x>
      <y>350</y>
-     <width>241</width>
+     <width>281</width>
      <height>41</height>
     </rect>
    </property>
@@ -275,9 +275,9 @@ QLineEdit:focus{
   <widget class="QLineEdit" name="newPasswordText">
    <property name="geometry">
     <rect>
-     <x>150</x>
+     <x>130</x>
      <y>440</y>
-     <width>241</width>
+     <width>281</width>
      <height>41</height>
     </rect>
    </property>
