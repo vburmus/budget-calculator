@@ -106,6 +106,9 @@ QPushButton:pressed{
      <bold>true</bold>
     </font>
    </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);</string>
+   </property>
    <property name="text">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;UserNameg&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
@@ -170,15 +173,18 @@ QLineEdit:focus{
 </string>
    </property>
    <property name="text">
-    <string>CurrentUserName</string>
+    <string/>
+   </property>
+   <property name="placeholderText">
+    <string>user_name</string>
    </property>
   </widget>
   <widget class="QLabel" name="enterCurrentPasswordLabel">
    <property name="geometry">
     <rect>
-     <x>140</x>
+     <x>130</x>
      <y>300</y>
-     <width>261</width>
+     <width>281</width>
      <height>51</height>
     </rect>
    </property>
@@ -353,10 +359,10 @@ QPushButton:pressed{
   <widget class="QLabel" name="communicateTextLabel">
    <property name="geometry">
     <rect>
-     <x>140</x>
-     <y>180</y>
-     <width>261</width>
-     <height>21</height>
+     <x>110</x>
+     <y>170</y>
+     <width>331</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="font">
@@ -378,9 +384,9 @@ QPushButton:pressed{
   <widget class="QPushButton" name="deleteAccountButton">
    <property name="geometry">
     <rect>
-     <x>340</x>
+     <x>290</x>
      <y>700</y>
-     <width>171</width>
+     <width>221</width>
      <height>31</height>
     </rect>
    </property>
@@ -412,6 +418,45 @@ QPushButton:pressed{
    </property>
    <property name="text">
     <string>Delete my account</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="importToCsvButton">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>700</y>
+     <width>221</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>11</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{
+	border-radius: 8px;
+	background-color: rgb(255, 255, 255);
+}
+
+QPushButton:hover{
+	border-radius: 8px;
+	background-color:  rgb(148, 17, 255);
+	color: white;
+}
+
+QPushButton:pressed{
+	border-radius: 8px;
+	background-color: rgb(187, 26, 202);
+	color: white;
+}</string>
+   </property>
+   <property name="text">
+    <string>Import transactions to csv</string>
    </property>
   </widget>
  </widget>
