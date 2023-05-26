@@ -288,6 +288,47 @@ QLineEdit:focus{
     <enum>Qt::Horizontal</enum>
    </property>
   </widget>
+  <widget class="QPushButton" name="exitButton">
+   <property name="geometry">
+    <rect>
+     <x>490</x>
+     <y>10</y>
+     <width>51</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Bahnschrift</family>
+     <pointsize>11</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{
+	border-image: url(:/ui/exit.png);
+}
+
+QPushButton:hover{
+	
+	border-image: url(:/ui/exit-hover.png);
+}
+QPushButton:pressed{
+	
+	border-image: url(:/ui/exit-pressed.png);
+}</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="flat">
+    <bool>false</bool>
+   </property>
+  </widget>
  </widget>
  <resources>
   <include location="background.qrc"/>
