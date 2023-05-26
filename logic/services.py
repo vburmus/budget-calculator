@@ -78,11 +78,15 @@ class UserService:
         return False, "Empty credentials"
 
     # +- -||- HANDLE LOGS!
-    def delete(self, user: User):
+    def delete(self, user: User, given_password: str):
+        bd_user = self.get_user_by_id(user.id)
+        if not DataValidation.is_password_valid(bd_user.password,
+                                                given_password):
+            return False, "Given password is wrong"
         logger.info(f"Deleting user {user.login}...")
         if not self.is_user_exists(user.login):
             return False, f"User {user.login} doesn't exist"
-        self.delete(user)
+        self.user_repository.delete(user)
         return True, f"User {user.login} successfully deleted"
 
     def is_user_exists(self, login: str) -> bool:

@@ -112,15 +112,28 @@ class UserSettingsPage(QWidget):
         super(UserSettingsPage, self).__init__()
         loadUi("ui/UserSettingsPage.ui", self)
         self.user = user
-        self.updating_username(user)
+        self.refresh_labels(user)
         self.exitButton.clicked.connect(self.exit)
         self.submitButton.clicked.connect(self.submit_changes)
         self.user_service = UserService()
         self.communicateTextLabel.setText("")
+        self.deleteAccountButton.clicked.connect(self.delete_account)
 
-    def updating_username(self, user):
+    def delete_account(self):
+        success, message = self.user_service.delete(self.user, self.passwordText.text())
+        if success:
+            loginWindow = LoginPage()
+            widget.addWidget(loginWindow)
+            widget.setFixedSize(549, 626)
+            widget.setCurrentIndex(widget.currentIndex() + 1)
+        else:
+            self.communicateTextLabel.setText(message)
+            self.passwordText.setText("")
+
+    def refresh_labels(self, user):
         self.userName.setText(user.login)
         self.userNameTextEdit.setPlaceholderText(user.login)
+
 
     def exit(self):
         mainWindow = MainPage(self.user)
@@ -137,9 +150,10 @@ class UserSettingsPage(QWidget):
         self.newPasswordText.setText("")
         if success:
             self.user = message
-            self.updating_username(self.user)
+            self.refresh_labels(self.user)
         else:
             self.communicateTextLabel.setText(message)
+
 
 class AddAccountPage(QWidget):
     def __init__(self, user):

@@ -41,7 +41,7 @@ CREATE_CATEGORY_QUERY = "INSERT INTO category (name) VALUES (?)"
 
 GET_CURRENT_USER_BALANCE_QUERY = "SELECT balance FROM user WHERE login = ?"
 
-DELETE_USER_QUERY = "DELETE FROM user WHERE login = ?)"
+DELETE_USER_QUERY = "DELETE FROM user WHERE login = ?"
 
 GET_USER_BY_ID_QUERY = "SELECT * FROM user WHERE id = ?"
 
@@ -130,7 +130,7 @@ class UserRepository(ARepository[User]):
         return self.get_by_param(user.id)
 
     def delete(self, user: User) -> None:
-        return self.cursor.execute(DELETE_USER_QUERY, (user.login,))
+        self.cursor.execute(DELETE_USER_QUERY, (user.login,))
 
     @staticmethod
     def parse(user: str) -> User | None:
