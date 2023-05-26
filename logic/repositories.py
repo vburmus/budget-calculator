@@ -57,7 +57,7 @@ GET_ACCOUNT_BY_ID_QUERY = "SELECT * FROM account WHERE id = ?"
 
 UPDATE_ACCOUNT_QUERY = "UPDATE account SET name = ?, description = ?, user_id = ?, balance = ? WHERE  id = ?"
 
-LAST_ROW_QUERY = "SELECT * FROM '{}' ORDER BY id DESC LIMIT 1"
+LAST_ROW_QUERY = "SELECT * FROM {} ORDER BY id DESC LIMIT 1"
 
 
 class ParamType(Enum):
@@ -125,9 +125,9 @@ class UserRepository(ARepository[User]):
         return user
 
     def update(self, user: User) -> User:
-        old_user = self.get_by_param(user.login)
-        self.cursor.execute(UPDATE_USER_QUERY, (user.id,))
-        return self.get_by_param(old_user.id)
+        self.cursor.execute(UPDATE_USER_QUERY, (user.login, user.password
+                                                , user.id,))
+        return self.get_by_param(user.id)
 
     def delete(self, user: User) -> None:
         return self.cursor.execute(DELETE_USER_QUERY, (user.login,))
