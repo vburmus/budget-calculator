@@ -222,7 +222,7 @@ class UserHasCategoryRepository(ARepository[UserCategory]):
                             (user_category.user.id, user_category.category.id))
         return self.get_last_row("user_has_category")
 
-    def get_by_param(self, item: User | Category) -> List[UserCategory]:
+    def get_by_param(self, item: User | Category) -> List[Category]:
         if isinstance(item, User):
             self.cursor.execute(SELECT_USERS_CATEGORIES_QUERY, (item.id,))
         elif isinstance(item, Category):
@@ -244,14 +244,15 @@ class UserHasCategoryRepository(ARepository[UserCategory]):
                             (user_category.user.id, user_category.category.id))
 
     @staticmethod
-    def parse(item_representation: str) -> T | None:
+    def parse(item_representation: str) -> Category | None:
         if item_representation is None:
             return None
-        user_repository = UserRepository()
+
         category_repository = CategoryRepository()
-        user = user_repository.get_by_param(int(item_representation[0]))
+
         category = category_repository.get_by_param(int(item_representation[1]))
-        return UserCategory(user=user, category=category)
+
+        return category
 
 
 class TransactionRepository(ARepository[Transaction]):
