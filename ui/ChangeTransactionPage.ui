@@ -51,9 +51,9 @@
   <widget class="QLineEdit" name="AmountText">
    <property name="geometry">
     <rect>
-     <x>150</x>
+     <x>120</x>
      <y>290</y>
-     <width>241</width>
+     <width>301</width>
      <height>41</height>
     </rect>
    </property>
@@ -81,6 +81,9 @@ QLineEdit:focus{
 </string>
    </property>
    <property name="text">
+    <string/>
+   </property>
+   <property name="placeholderText">
     <string>Current amount</string>
    </property>
   </widget>
@@ -218,7 +221,7 @@ QPushButton:pressed{
      <x>140</x>
      <y>200</y>
      <width>261</width>
-     <height>21</height>
+     <height>31</height>
     </rect>
    </property>
    <property name="font">
@@ -264,9 +267,9 @@ QPushButton:pressed{
   <widget class="QLineEdit" name="TransDescrText">
    <property name="geometry">
     <rect>
-     <x>100</x>
+     <x>120</x>
      <y>380</y>
-     <width>341</width>
+     <width>301</width>
      <height>41</height>
     </rect>
    </property>
@@ -294,6 +297,9 @@ QLineEdit:focus{
 </string>
    </property>
    <property name="text">
+    <string/>
+   </property>
+   <property name="placeholderText">
     <string>Current description</string>
    </property>
   </widget>
@@ -324,9 +330,9 @@ QLineEdit:focus{
   <widget class="QComboBox" name="categoriesComboBox">
    <property name="geometry">
     <rect>
-     <x>150</x>
+     <x>120</x>
      <y>470</y>
-     <width>241</width>
+     <width>301</width>
      <height>31</height>
     </rect>
    </property>
@@ -367,21 +373,6 @@ QComboBox QAbstractItemView {
 }
 </string>
    </property>
-   <item>
-    <property name="text">
-     <string>item 1</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>ggff</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>item 2</string>
-    </property>
-   </item>
   </widget>
  </widget>
  <resources>
