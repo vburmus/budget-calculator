@@ -62,7 +62,6 @@ class UserService:
     def update(self, user: User, given_password: str, login: str = None, password: str = None):
         bd_user = self.get_user_by_id(user.id)
         logger.info(f"Update user {user.login}...")
-        logger.info(f"{DataValidation.encode_password(given_password)} == {user.password}")
         if not DataValidation.is_password_valid(bd_user.password,
                                                 given_password):
             return False, "Given password is wrong"
@@ -84,11 +83,15 @@ class UserService:
         return False, "Empty credentials"
 
     # +- -||- HANDLE LOGS!
-    def delete(self, user: User):
+    def delete(self, user: User, given_password: str):
+        bd_user = self.get_user_by_id(user.id)
+        if not DataValidation.is_password_valid(bd_user.password,
+                                                given_password):
+            return False, "Given password is wrong"
         logger.info(f"Deleting user {user.login}...")
         if not self.is_user_exists(user.login):
             return False, f"User {user.login} doesn't exist"
-        self.delete(user)
+        self.user_repository.delete(user)
         return True, f"User {user.login} successfully deleted"
 
     def is_user_exists(self, login: str) -> bool:
@@ -103,48 +106,48 @@ class UserService:
         return self.user_category_repository.get_by_param(user)
 
     def is_user_has_category(self, user: User, category: Category) -> bool:
-        user_categories_names = [category.name for category in self.get_user_categories(user)]
-        if category.name in any(user_categories_names):
+        user_categories_names = []
+        for categorydb in self.get_user_categories(user):
+            user_categories_names.append(categorydb.name)
+        if len(user_categories_names) == 0:
+            return False
+        if category.name in user_categories_names:
             return True
         else:
             return False
 
     def add_category_user(self, user: User, name: str):
+        if not name:
+            return False,"Name can't be null"
         category = Category(name=name)
         if self.is_user_has_category(user, category):
             return False, f"Category {category.name} exists"
         if self.category_service.is_category_exist(category.name):
             category.id = self.category_service.get_category_by_name(name).id
-            return True, self.user_category_repository.create(
-                UserCategory(user=user, category=category))
+            return self.user_category_repository.create(
+                UserCategory(user=user, category=category)),"Successfully created category"
         else:
             success, message = self.category_service.create(category.name)
             if success:
-                return True, self.user_category_repository.create(UserCategory(user=user, category=success))
+                return\
+                    self.user_category_repository.create(UserCategory(user=user, category=message)),"Successfully created category"
             return False, message
 
-    def delete_category_from_user(self, user: User, name: str):
+    def delete_category_from_user(self, user: User, category: Category):
+        categorydb = self.category_service.get_category_by_name(category.name)
+        user_category = UserCategory(user=user, category=categorydb)
+        self.user_category_repository.delete(user_category)
 
-        if not self.category_service.is_category_exist(name):
-            return False, "There is no such category"
-        category = Category(name=name)
-        if not self.is_user_has_category(user=user, category=category):
-            return False, "Wrong category"
-        else:
-            category = self.category_service.get_category_by_name(name)
-            user_category = UserCategory(user=user, category=category)
-            self.user_category_repository.delete(user_category)
+        if self.category_service.get_category_count(category) == 0:
+            self.category_service.delete(categorydb)
 
-            if self.category_service.get_category_count(category) == 0:
-                self.category_service.delete(category)
-            return True, f"Successfully deleted {category.name}"
 
 
 class AccountService:
 
     def __init__(self):
         self.account_repository = AccountRepository()
-        self.transaction_repository = TransactionRepository()
+        self.transaction_service = TransactionService()
 
     def create(self, name: str, user: User, balance: str = "0", description: str = ""):
         if not name:
@@ -156,16 +159,18 @@ class AccountService:
         if self.is_account_exists(name, user):
             return False, f"Account {name} exists"
         account = Account(name=name, user=user, balance=current, description=description)
-        self.account_repository.create(account)
-        return True, f"Successfully created account {name}"
+        return True, self.account_repository.create(account)
 
-    def get_user_accounts(self, user: User):
+    def get_user_accounts(self, user: User) -> object:
         return self.account_repository.get_by_param(user)
 
     def get_account_by_id(self, id: int):
         return self.account_repository.get_by_param(id)
 
-    def update(self, account: Account, name: str, description: str, balance: float):
+    def update(self, account: Account, name: str, description: str, balance: str):
+        if not (name or description or  balance):
+            return False, "Credentials can't be null"
+
         if account.name == name and account.description == description and account.balance == balance:
             return False, "Credentials must be changed to update"
         logger.info("Updating account...")
@@ -178,21 +183,25 @@ class AccountService:
             account.description = description
             logger.info("Description updated")
         if balance:
-            correction = balance - account.balance
+            if not DataValidation.isfloat(balance):
+                return False, "Error format"
+            correction = float(balance) - account.balance
 
-            success, _ = self.transaction_repository.create(
-                Transaction(amount=correction, account=account, description="Correction"))
+
+            success, transaction = self.transaction_service.create(amount=correction, account=account, description="Correction")
             if not success:
                 return False, "Error while correcting"
+            account.balance = float(balance)
 
             logger.info("Balance updated")
 
         return True, self.account_repository.update(account)
 
+
     def delete(self, account: Account):
         if not self.is_account_exists(account.name, account.user):
             return False, f"Account {account.name} doesn't exist"
-        self.delete(account)
+        self.account_repository.delete(account)
         return True, f"Account {account.name} successfully deleted"
 
     def is_account_exists(self, name: str, user: User) -> bool:
@@ -228,6 +237,8 @@ class CategoryService:
         return self.category_repository.get_by_param(name)
 
     def update(self, category: Category, name: str):
+        if not name:
+            return False, "Updated name can’t be null"
         logger.info(f"Update category {category.name}...")
         if category.name == name:
             return False, "Credentials must be changed to update"
@@ -260,14 +271,14 @@ class TransactionService:
     def __init__(self):
         self.transaction_repository = TransactionRepository()
 
-    def create(self, amount: str, description: str, account: Account, category: Category):
+    def create(self, amount: str, description: str, account: Account, category: Category = None):
         logger.info(f"Creating transaction...")
         if not amount:
             return False, f"Amount can't be null"
         if not DataValidation.isfloat(amount):
             return False, "Amount must be float"
 
-        transaction = Transaction(amount=float(amount), account=account, description=description, category=category)
+        transaction = Transaction(amount=float(amount), account=account, description=description)
         return True, self.transaction_repository.create(transaction)
 
     def delete(self, transaction: Transaction):

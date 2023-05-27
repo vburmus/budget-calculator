@@ -330,8 +330,15 @@ QLineEdit:focus{
      <height>31</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>Bahnschrift</family>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
    <property name="styleSheet">
     <string notr="true">QComboBox{
+	padding-left: 10px;
 	border-radius: 5px;
 	background-color: rgba(255, 255, 255, 0);
 	border: 2px solid rgb(255, 255, 255);
@@ -344,6 +351,7 @@ QComboBox:hover{
 	border: 2px solid rgb(255, 0, 255);
 	color: white;
 }
+
 QComboBox:pressed{
 	border-radius: 5px;
 	background-color: rgba(255, 255, 255, 0);
@@ -351,11 +359,29 @@ QComboBox:pressed{
 	color: white;
 }
 
-
-
-
+QComboBox QAbstractItemView {
+	background-color:  rgb(255, 0, 255);
+	color: white;
+	selection-background-color: rgb(156, 106, 255);
+	selection-color: white;
+}
 </string>
    </property>
+   <item>
+    <property name="text">
+     <string>item 1</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>ggff</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>item 2</string>
+    </property>
+   </item>
   </widget>
  </widget>
  <resources>

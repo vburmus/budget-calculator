@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1325</width>
-    <height>788</height>
+    <height>789</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,7 +26,11 @@
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">border-image: url(:/ui/bckimg.jpg);</string>
+    <string notr="true">border-image: url(:/ui/bckimg.jpg);
+
+
+
+</string>
    </property>
    <property name="text">
     <string/>
@@ -124,7 +128,40 @@ QPushButton:pressed{
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color: rgba(255, 0, 0, 30);  border-radius: 20px</string>
+    <string notr="true">.QFrame{
+	background-color: rgba(255, 0, 0, 30);  border-radius: 20px
+}
+QComboBox{
+	padding-left: 10px;
+	border-radius: 5px;
+	background-color: rgba(255, 255, 255, 0);
+	border: 2px solid rgb(255, 255, 255);
+	color: white;
+}
+
+QComboBox:hover{
+	border-radius: 5px;
+	background-color: rgba(255, 255, 255, 0);
+	border: 2px solid rgb(255, 0, 255);
+	color: white;
+}
+
+QComboBox:pressed{
+	border-radius: 5px;
+	background-color: rgba(255, 255, 255, 0);
+	border: 2px solid rgb(156, 106, 255);
+	color: white;
+}
+
+QComboBox QAbstractItemView {
+	background-color:  rgb(255, 0, 255);
+	color: white;
+	selection-background-color: rgb(156, 106, 255);
+	selection-color: white;
+}
+
+
+</string>
    </property>
    <property name="frameShape">
     <enum>QFrame::StyledPanel</enum>
@@ -160,7 +197,7 @@ color: rgb(255, 255, 255);
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>120</y>
+      <y>140</y>
       <width>351</width>
       <height>41</height>
      </rect>
@@ -180,49 +217,15 @@ color: rgb(255, 255, 255);
     <property name="text">
      <string>Account description here........................</string>
     </property>
-   </widget>
-   <widget class="QPushButton" name="deleteAccountButton">
-    <property name="geometry">
-     <rect>
-      <x>220</x>
-      <y>430</y>
-      <width>141</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Bahnschrift</family>
-      <pointsize>10</pointsize>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QPushButton{
-	border-radius: 8px;
-	background-color: rgba(255, 0, 0, 100);
-	color: rgb(255, 255, 255);
-}
-
-QPushButton:hover{
-	border-radius: 8px;
-	background-color: rgb(187, 26, 202);
-	color: white;
-}
-QPushButton:pressed{
-	border-radius: 8px;
-	background-color: rgb(92, 17, 255);
-	color: white;
-}</string>
-    </property>
-    <property name="text">
-     <string>Delete current account</string>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QPushButton" name="addAccountButton">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>430</y>
+      <x>20</x>
+      <y>420</y>
       <width>141</width>
       <height>31</height>
      </rect>
@@ -254,11 +257,11 @@ QPushButton:pressed{
      <string>Add new account</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="changeDescriptionButton">
+   <widget class="QPushButton" name="manageAccButton">
     <property name="geometry">
      <rect>
-      <x>110</x>
-      <y>190</y>
+      <x>210</x>
+      <y>420</y>
       <width>141</width>
       <height>31</height>
      </rect>
@@ -312,34 +315,41 @@ QPushButton:pressed{
       <x>60</x>
       <y>70</y>
       <width>241</width>
-      <height>31</height>
+      <height>41</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Bahnschrift</family>
+      <pointsize>16</pointsize>
+     </font>
+    </property>
     <property name="styleSheet">
-     <string notr="true">QComboBox{
-	border-radius: 5px;
-	background-color: rgba(255, 255, 255, 0);
-	border: 2px solid rgb(255, 255, 255);
-	color: white;
-}
-
-QComboBox:hover{
-	border-radius: 5px;
-	background-color: rgba(255, 255, 255, 0);
-	border: 2px solid rgb(255, 0, 255);
-	color: white;
-}
-QComboBox:pressed{
-	border-radius: 5px;
-	background-color: rgba(255, 255, 255, 0);
-	border: 2px solid rgb(156, 106, 255);
-	color: white;
-}
-
-
-
-
+     <string notr="true"/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="accountBalanceLabel">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>240</y>
+      <width>351</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Bahnschrift</family>
+      <pointsize>17</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgba(255, 255, 255,0);
+color: rgb(255, 255, 255);
 </string>
+    </property>
+    <property name="text">
+     <string>Your account balance: </string>
     </property>
    </widget>
   </widget>
@@ -607,7 +617,7 @@ QPushButton:pressed{
      <string>Delete current transaction</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="changeTransactionButton_2">
+   <widget class="QPushButton" name="manageCatButton">
     <property name="geometry">
      <rect>
       <x>90</x>

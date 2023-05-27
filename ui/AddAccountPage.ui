@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>538</width>
-    <height>768</height>
+    <height>769</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -218,7 +218,7 @@ QPushButton:pressed{
      <x>140</x>
      <y>200</y>
      <width>261</width>
-     <height>21</height>
+     <height>31</height>
     </rect>
    </property>
    <property name="font">
@@ -228,7 +228,7 @@ QPushButton:pressed{
     </font>
    </property>
    <property name="styleSheet">
-    <string notr="true">color: rgb(255, 112, 114);</string>
+    <string notr="true"/>
    </property>
    <property name="text">
     <string>Communicate!</string>

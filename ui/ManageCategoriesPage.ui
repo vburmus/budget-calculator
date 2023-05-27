@@ -31,6 +31,9 @@
    <property name="text">
     <string/>
    </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
   </widget>
   <widget class="QLabel" name="logo">
    <property name="geometry">
@@ -58,7 +61,16 @@
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color: rgba(255, 0, 0, 0); border-radius: 20px;</string>
+    <string notr="true">QFrame{
+	background-color: rgba(255, 0, 0, 0);
+	border-radius: 20px;
+}
+
+QListWidget{
+	color: white;
+	font: 12pt &quot;Bahnschrift&quot;;	
+	background-color: rgba(91, 0, 121,150);
+}</string>
    </property>
    <property name="frameShape">
     <enum>QFrame::StyledPanel</enum>
@@ -66,18 +78,43 @@
    <property name="frameShadow">
     <enum>QFrame::Raised</enum>
    </property>
-   <widget class="QListView" name="categoriesListBox">
+   <widget class="QListWidget" name="categoriesListBox">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>10</y>
-      <width>311</width>
-      <height>371</height>
+      <x>15</x>
+      <y>11</y>
+      <width>341</width>
+      <height>381</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
+     <string notr="true"/>
     </property>
+    <item>
+     <property name="text">
+      <string>asd</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>asdasd</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>asdasdasd</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>gggg</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>ffff</string>
+     </property>
+    </item>
    </widget>
   </widget>
   <widget class="QPushButton" name="deleteCategoryButton">
@@ -152,6 +189,9 @@ QLineEdit:focus{
 </string>
    </property>
    <property name="text">
+    <string/>
+   </property>
+   <property name="placeholderText">
     <string>CategoryName</string>
    </property>
   </widget>
@@ -326,9 +366,9 @@ QPushButton:pressed{
    <property name="geometry">
     <rect>
      <x>130</x>
-     <y>680</y>
+     <y>670</y>
      <width>261</width>
-     <height>21</height>
+     <height>31</height>
     </rect>
    </property>
    <property name="font">

@@ -9,11 +9,11 @@ from logic.entities import User, Account, Category, Transaction, UserCategory
 
 CREATE_NEW_CATEGORY_QUERY = "insert into user_has_category (user_id, category_id) values (?,?)"
 
-SELECT_USERS_CATEGORIES_QUERY = "select * from user_has_repository where user_id = ?"
+SELECT_USERS_CATEGORIES_QUERY = "select * from user_has_category where user_id = ?"
 
-SELECT_CATEGORY_COUNT_QUERY = "select count(*) from user_has_repository where category_id = ?"
+SELECT_CATEGORY_COUNT_QUERY = "select count(*) from user_has_category where category_id = ?"
 
-DELETE_USER_HAS_CATEGORY_QUERY = "delete from user_has_repository where user_id = ? and category_id =?"
+DELETE_USER_HAS_CATEGORY_QUERY = "delete from user_has_category where user_id = ? and category_id =?"
 
 DELETE_TRANSACTION_QUERY = "DELETE FROM transaction WHERE id = ?"
 
@@ -33,7 +33,7 @@ SELECT_TRANSACTIONS_BY_ACCOUNT_QUERY = "SELECT * FROM transaction WHERE account_
 SELECT_TRANSACTION_BY_ID_QUERY = "SELECT * FROM transaction WHERE id = ?"
 
 CREATE_TRANSACTION_QUERY = "INSERT INTO transaction" \
-                           " (amount, description, account_id, category_id) VALUES (?,?,?,?,?)"
+                           " (amount, description, account_id) VALUES (?,?,?)"
 
 GET_CATEGORY_BY_ID_QUERY = "SELECT * FROM category WHERE id = ?  "
 GET_CATEGORY_BY_NAME_QUERY = "SELECT * FROM category WHERE name = ?  "
@@ -41,7 +41,7 @@ CREATE_CATEGORY_QUERY = "INSERT INTO category (name) VALUES (?)"
 
 GET_CURRENT_USER_BALANCE_QUERY = "SELECT balance FROM user WHERE login = ?"
 
-DELETE_USER_QUERY = "DELETE FROM user WHERE login = ?)"
+DELETE_USER_QUERY = "DELETE FROM user WHERE login = ?"
 
 GET_USER_BY_ID_QUERY = "SELECT * FROM user WHERE id = ?"
 
@@ -121,7 +121,6 @@ class UserRepository(ARepository[User]):
             return None
         result = self.cursor.fetchone()
         user = self.parse(result)
-        logger.info(result)
         return user
 
     def update(self, user: User) -> User:
@@ -130,7 +129,7 @@ class UserRepository(ARepository[User]):
         return self.get_by_param(user.id)
 
     def delete(self, user: User) -> None:
-        return self.cursor.execute(DELETE_USER_QUERY, (user.login,))
+        self.cursor.execute(DELETE_USER_QUERY, (user.login,))
 
     @staticmethod
     def parse(user: str) -> User | None:
@@ -157,7 +156,7 @@ class AccountRepository(ARepository[Account]):
                 accounts.append(self.parse(account))
             return accounts
         elif isinstance(item, int):
-            self.cursor.execute(GET_ACCOUNT_BY_ID_QUERY, (id,))
+            self.cursor.execute(GET_ACCOUNT_BY_ID_QUERY, (item,))
         else:
             logger.error(f"There is no such option for this type")
             return None
@@ -219,7 +218,7 @@ class UserHasCategoryRepository(ARepository[UserCategory]):
     def create(self, user_category: UserCategory) -> UserCategory:
         self.cursor.execute(CREATE_NEW_CATEGORY_QUERY,
                             (user_category.user.id, user_category.category.id))
-        return self.get_last_row("user_has_category")
+        return True
 
     def get_by_param(self, item: User | Category) -> List[Category]:
         if isinstance(item, User):
@@ -258,11 +257,12 @@ class UserHasCategoryRepository(ARepository[UserCategory]):
 
 class TransactionRepository(ARepository[Transaction]):
     def create(self, transaction: Transaction) -> Transaction:
+        #TODO category
         self.cursor.execute(
             CREATE_TRANSACTION_QUERY, (transaction.amount,
                                        transaction.description,
                                        transaction.account.id,
-                                       transaction.category.id))
+                                      ))
         return self.get_last_row("transaction")
 
     def get_by_param(self, item: int | Account) -> Transaction | List[Transaction]:
@@ -296,8 +296,8 @@ class TransactionRepository(ARepository[Transaction]):
         category_repository = CategoryRepository()
 
         account_repository = AccountRepository()
-        category = category_repository.get_by_param(int(transaction[5]))
+        #category = category_repository.get_by_param(int(transaction[5]))
 
         account = account_repository.get_by_param(int(transaction[4]))
         return Transaction(id=int(transaction[0]), amount=float(transaction[1]), description=transaction[2],
-                           date=transaction[3], account=account, category=category)
+                           date=transaction[3], account=account)
