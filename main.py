@@ -1,6 +1,6 @@
 import sys
 
-from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit
+from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QListWidget, QListWidgetItem
 from PyQt5 import QtWidgets
 from PyQt5 import uic
 import ui.background_rc
@@ -299,13 +299,23 @@ class ManageCategoriesPage(QWidget):
         uic.loadUi("ui/ManageCategoriesPage.ui", self)
 
         self.user = user
+        self.user_service = UserService()
+        self.category_service = CategoryService()
+        self.current_category = None
 
         self.exitButton.clicked.connect(self.exit)
         self.addCatButton.clicked.connect(self.goto_add_category_page)
+        self.deleteCategoryButton.clicked.connect(self.delete_category)
+        self.submitButton.clicked.connect(self.update_category)
+
+        self.categoriesListBox.itemSelectionChanged.connect(self.category_chose)
+
 
         # TODO current category placeholder text
         self.CategoryNameText.setPlaceholderText("")
         self.communicateTextLabel.setText("")
+
+        self.refresh_categories()
 
     def exit(self):
         mainWindow = MainPage(self.user)
@@ -319,6 +329,42 @@ class ManageCategoriesPage(QWidget):
         widget.setFixedSize(538, 768)
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
+    # TODO stylesheet
+    def category_chose(self):
+        selected_items = self.categoriesListBox.selectedItems()
+        if not selected_items:
+            return
+        selected_item = selected_items[0]
+        self.current_category = self.category_service.get_category_by_name(selected_item.text())
+
+        self.CategoryNameText.setPlaceholderText(self.current_category.name)
+
+    def refresh_categories(self):
+        self.categoriesListBox.clear()
+        self.CategoryNameText.setPlaceholderText("")
+        for category in self.user_service.get_user_categories(self.user):
+            self.categoriesListBox.addItem(category.name)
+        self.current_category = None
+
+    def delete_category(self):
+        if self.current_category:
+            self.user_service.delete_category_from_user(self.user, self.current_category)
+            self.refresh_categories()
+
+    def update_category(self):
+        success, message = self.category_service.update(self.current_category, self.CategoryNameText.text())
+
+        if success:
+            self.refresh_categories()
+        else:
+            self.communicateTextLabel.setText(message)
+            logger.warning(message)
+
+        ApplicationService.clear_fields([self.CategoryNameText])
+
+
+
+
 
 class AddCategoryPage(QWidget):
     def __init__(self, user):
@@ -326,8 +372,10 @@ class AddCategoryPage(QWidget):
         uic.loadUi("ui/AddCategoryPage.ui", self)
 
         self.user = user
+        self.user_service = UserService()
 
         self.exitButton.clicked.connect(self.go_back)
+        self.addButton.clicked.connect(self.add_category)
 
         self.communicateTextLabel.setText("")
 
@@ -336,6 +384,18 @@ class AddCategoryPage(QWidget):
         widget.addWidget(manageCat)
         widget.setFixedSize(538, 768)
         widget.setCurrentIndex(widget.currentIndex() + 1)
+
+    def add_category(self):
+        success, message = self.user_service.add_category_user(self.user, self.CategoryNameText.text())
+
+        if success:
+            self.communicateTextLabel.setStyleSheet("color:  rgb(170, 255, 127);")
+            self.communicateTextLabel.setText("Category added!")
+        else:
+            self.communicateTextLabel.setStyleSheet("color: rgb(255, 112, 114);")
+            self.communicateTextLabel.setText(message)
+
+        ApplicationService.clear_fields([self.CategoryNameText])
 
 
 if __name__ == '__main__':
