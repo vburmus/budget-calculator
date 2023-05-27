@@ -130,7 +130,7 @@ class AccountService:
     def create(self, name: str, user: User, balance: str = "0", description: str = ""):
         if not name:
             return False, "Name can't be null "
-        if balance.isnumeric():
+        if DataValidation.isfloat(balance):
             current = float(balance)
         else:
             return False, f"Wrong format of balance"
