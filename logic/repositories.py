@@ -11,7 +11,7 @@ CREATE_NEW_CATEGORY_QUERY = "insert into user_has_category (user_id, category_id
 
 SELECT_USERS_CATEGORIES_QUERY = "select * from user_has_repository where user_id = ?"
 
-SELECT_CATEGORY_USERS_QUERY = "select * from user_has_repository where category_id = ?"
+SELECT_CATEGORY_COUNT_QUERY = "select count(*) from user_has_repository where category_id = ?"
 
 DELETE_USER_HAS_CATEGORY_QUERY = "delete from user_has_repository where user_id = ? and category_id =?"
 
@@ -224,15 +224,17 @@ class UserHasCategoryRepository(ARepository[UserCategory]):
     def get_by_param(self, item: User | Category) -> List[Category]:
         if isinstance(item, User):
             self.cursor.execute(SELECT_USERS_CATEGORIES_QUERY, (item.id,))
+            result = self.cursor.fetchall()
+            user_has_category = []
+            for user_category in result:
+                user_has_category.append(self.parse(user_category))
+            return user_has_category
         elif isinstance(item, Category):
-            self.cursor.execute(SELECT_CATEGORY_USERS_QUERY, (item.id,))
+            self.cursor.execute(SELECT_CATEGORY_COUNT_QUERY, (item.id,))
+            return self.cursor.fetchone()
         else:
             logger.error(f"There is no such option for this type")
-        result = self.cursor.fetchall()
-        user_has_category = []
-        for user_category in result:
-            user_has_category.append(self.parse(user_category))
-        return user_has_category
+
 
     def update(self, item: T) -> T:
         logger.error(f"There is no such option for this type")
