@@ -104,10 +104,12 @@ class UserService:
         else:
             return False
 
-    def add_category_user(self, user: User, category: Category):
+    def add_category_user(self, user: User, name: str):
+        category = Category(name=name)
         if self.is_user_has_category(user, category):
             return False, f"Category {category.name} exists"
         if self.category_service.is_category_exist(category.name):
+            category.id = self.category_service.get_category_by_name(name).id
             return True, self.user_category_repository.create(
                 UserCategory(user=user, category=category))
         else:
@@ -116,11 +118,21 @@ class UserService:
                 return True, self.user_category_repository.create(UserCategory(user=user, category=success))
             return False, message
 
-    # TODO
-    def delete_category_from_user(self, user: User, category: Category):
+    def delete_category_from_user(self, user: User, name: str):
+
+        if not self.category_service.is_category_exist(name):
+            return False, "There is no such category"
+        category = Category(name=name)
         if not self.is_user_has_category(user=user, category=category):
             return False, "Wrong category"
-        return True, f"Successfully deleted {category.name}"
+        else:
+            category = self.category_service.get_category_by_name(name)
+            user_category = UserCategory(user=user, category=category)
+            self.user_category_repository.delete(user_category)
+
+            if self.category_service.get_category_count(category) == 0:
+                self.category_service.delete(category)
+            return True, f"Successfully deleted {category.name}"
 
 
 class AccountService:
