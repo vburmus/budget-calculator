@@ -89,6 +89,11 @@ class MainPage(QWidget):
         self.accountDescription.setText("")
         self.transactionDetails.setText("")
 
+        self.comboBoxAccounts.currentTextChanged.connect(self.account_changed)
+
+    def account_changed(self):
+        logger.info(f"Changed account to {self.comboBoxAccounts.currentText()}")
+
     def sign_out_function(self):
         loginWindow = LoginPage()
         widget.addWidget(loginWindow)
