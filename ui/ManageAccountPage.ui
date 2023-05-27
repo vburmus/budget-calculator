@@ -51,9 +51,9 @@
   <widget class="QLineEdit" name="AccNameText">
    <property name="geometry">
     <rect>
-     <x>150</x>
+     <x>130</x>
      <y>290</y>
-     <width>241</width>
+     <width>281</width>
      <height>41</height>
     </rect>
    </property>
@@ -81,6 +81,9 @@ QLineEdit:focus{
 </string>
    </property>
    <property name="text">
+    <string/>
+   </property>
+   <property name="placeholderText">
     <string>Current account name</string>
    </property>
   </widget>
@@ -108,12 +111,12 @@ QLineEdit:focus{
     <set>Qt::AlignCenter</set>
    </property>
   </widget>
-  <widget class="QPushButton" name="addButton">
+  <widget class="QPushButton" name="submitButton">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>440</y>
-     <width>121</width>
+     <x>190</x>
+     <y>530</y>
+     <width>161</width>
      <height>41</height>
     </rect>
    </property>
@@ -144,7 +147,7 @@ QPushButton:pressed{
 }</string>
    </property>
    <property name="text">
-    <string>Add</string>
+    <string>Submit changes</string>
    </property>
   </widget>
   <widget class="QLabel" name="addAccLabel">
@@ -215,10 +218,10 @@ QPushButton:pressed{
   <widget class="QLabel" name="communicateTextLabel">
    <property name="geometry">
     <rect>
-     <x>140</x>
+     <x>90</x>
      <y>200</y>
-     <width>261</width>
-     <height>21</height>
+     <width>361</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="font">
@@ -240,9 +243,9 @@ QPushButton:pressed{
   <widget class="QLabel" name="enterAccDescrLabel">
    <property name="geometry">
     <rect>
-     <x>140</x>
+     <x>100</x>
      <y>330</y>
-     <width>261</width>
+     <width>341</width>
      <height>51</height>
     </rect>
    </property>
@@ -264,9 +267,9 @@ QPushButton:pressed{
   <widget class="QLineEdit" name="AccDescrText">
    <property name="geometry">
     <rect>
-     <x>150</x>
+     <x>130</x>
      <y>380</y>
-     <width>241</width>
+     <width>281</width>
      <height>41</height>
     </rect>
    </property>
@@ -294,7 +297,110 @@ QLineEdit:focus{
 </string>
    </property>
    <property name="text">
-    <string>Current account description</string>
+    <string/>
+   </property>
+   <property name="placeholderText">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="enterAccBalance">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>420</y>
+     <width>261</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Bahnschrift</family>
+     <pointsize>16</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Enter new account balance&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="AccBalanceText">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>470</y>
+     <width>281</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Bahnschrift</family>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QLineEdit{
+	background-color: rgba(255, 255, 255, 0);
+	border: 2px solid rgb(255, 255, 255);
+	border-radius: 8px;
+	color: white; 
+}
+
+QLineEdit:focus{
+	background-color: rgba(255, 255, 255, 0);
+	border: 2px solid  rgb(255, 0, 255);
+	border-radius: 8px;
+	color: white; 
+}
+
+</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="placeholderText">
+    <string>00000</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="deleteAccountButton">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>700</y>
+     <width>161</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Bahnschrift</family>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{
+	border-radius: 8px;
+	background-color: rgba(255, 0, 0, 100);
+	color: rgb(255, 255, 255);
+}
+
+QPushButton:hover{
+	border-radius: 8px;
+	background-color: rgb(187, 26, 202);
+	color: white;
+}
+QPushButton:pressed{
+	border-radius: 8px;
+	background-color: rgb(92, 17, 255);
+	color: white;
+}</string>
+   </property>
+   <property name="text">
+    <string>Delete current account</string>
    </property>
   </widget>
  </widget>

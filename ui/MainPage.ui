@@ -197,7 +197,7 @@ color: rgb(255, 255, 255);
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>120</y>
+      <y>140</y>
       <width>351</width>
       <height>41</height>
      </rect>
@@ -221,48 +221,11 @@ color: rgb(255, 255, 255);
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QPushButton" name="deleteAccountButton">
-    <property name="geometry">
-     <rect>
-      <x>220</x>
-      <y>430</y>
-      <width>141</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Bahnschrift</family>
-      <pointsize>10</pointsize>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QPushButton{
-	border-radius: 8px;
-	background-color: rgba(255, 0, 0, 100);
-	color: rgb(255, 255, 255);
-}
-
-QPushButton:hover{
-	border-radius: 8px;
-	background-color: rgb(187, 26, 202);
-	color: white;
-}
-QPushButton:pressed{
-	border-radius: 8px;
-	background-color: rgb(92, 17, 255);
-	color: white;
-}</string>
-    </property>
-    <property name="text">
-     <string>Delete current account</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="addAccountButton">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>430</y>
+      <x>20</x>
+      <y>420</y>
       <width>141</width>
       <height>31</height>
      </rect>
@@ -294,11 +257,11 @@ QPushButton:pressed{
      <string>Add new account</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="changeDescriptionButton">
+   <widget class="QPushButton" name="manageAccButton">
     <property name="geometry">
      <rect>
-      <x>110</x>
-      <y>240</y>
+      <x>210</x>
+      <y>420</y>
       <width>141</width>
       <height>31</height>
      </rect>
@@ -369,7 +332,7 @@ QPushButton:pressed{
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>180</y>
+      <y>240</y>
       <width>351</width>
       <height>41</height>
      </rect>
