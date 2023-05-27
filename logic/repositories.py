@@ -121,7 +121,6 @@ class UserRepository(ARepository[User]):
             return None
         result = self.cursor.fetchone()
         user = self.parse(result)
-        logger.info(result)
         return user
 
     def update(self, user: User) -> User:

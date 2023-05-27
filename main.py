@@ -14,6 +14,7 @@ class ApplicationService():
         for elem in list_of_lines:
             elem.setText("")
 
+
 # Login window class
 class LoginPage(QWidget):
     def __init__(self):
@@ -83,21 +84,41 @@ class MainPage(QWidget):
         super(MainPage, self).__init__()
         uic.loadUi("ui/MainPage.ui", self)
 
+        self.accountDescription.setText("")
+        self.transactionDetails.setText("")
+
         self.signOutButton.clicked.connect(self.sign_out_function)
         self.settingsButton.clicked.connect(self.user_settings)
         self.addAccountButton.clicked.connect(self.goto_adding_new_account)
 
-        self.userName.setText(user.login)
-
+        self.account_service = AccountService()
         self.user = user
 
-        self.accountDescription.setText("")
-        self.transactionDetails.setText("")
+        self.userName.setText(self.user.login)
+
+        # TODO add transactions of the account
+        user_accounts = self.account_service.get_user_accounts(self.user)
+
+        self.current_account = None
+
+        if len(user_accounts) != 0:
+            for account in user_accounts:
+                self.comboBoxAccounts.addItem(account.name)
+            self.account_changed()
 
         self.comboBoxAccounts.currentTextChanged.connect(self.account_changed)
 
+    # TODO add transactions of the account
     def account_changed(self):
         logger.info(f"Changed account to {self.comboBoxAccounts.currentText()}")
+
+        user_accounts = self.account_service.get_user_accounts(self.user)
+
+        self.current_account = user_accounts[self.comboBoxAccounts.currentIndex()]
+        self.accountDescription.setText(self.current_account.description)
+        self.accountBalanceLabel.setText("Your account balance: " + str(self.current_account.balance))
+
+
 
     def sign_out_function(self):
         loginWindow = LoginPage()

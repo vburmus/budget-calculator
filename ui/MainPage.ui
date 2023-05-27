@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1325</width>
-    <height>788</height>
+    <height>789</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -131,7 +131,7 @@ QPushButton:pressed{
     <string notr="true">.QFrame{
 	background-color: rgba(255, 0, 0, 30);  border-radius: 20px
 }
-.QComboBox{
+QComboBox{
 	padding-left: 10px;
 	border-radius: 5px;
 	background-color: rgba(255, 255, 255, 0);
@@ -139,30 +139,25 @@ QPushButton:pressed{
 	color: white;
 }
 
-.QComboBox:hover{
+QComboBox:hover{
 	border-radius: 5px;
 	background-color: rgba(255, 255, 255, 0);
 	border: 2px solid rgb(255, 0, 255);
 	color: white;
 }
 
-.QComboBox:pressed{
+QComboBox:pressed{
 	border-radius: 5px;
 	background-color: rgba(255, 255, 255, 0);
 	border: 2px solid rgb(156, 106, 255);
 	color: white;
 }
 
-.QComboBox QAbstractItemView {
-	background-color: rgb(170, 85, 255);
+QComboBox QAbstractItemView {
+	background-color:  rgb(255, 0, 255);
 	color: white;
-	selection-background-color: rgb(100, 48, 255);
+	selection-background-color: rgb(156, 106, 255);
 	selection-color: white;
-}
-
-
-.QComboBox QListView:item:hover {
-	background-color: black;
 }
 
 
@@ -221,6 +216,9 @@ color: rgb(255, 255, 255);
     </property>
     <property name="text">
      <string>Account description here........................</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QPushButton" name="deleteAccountButton">
@@ -300,7 +298,7 @@ QPushButton:pressed{
     <property name="geometry">
      <rect>
       <x>110</x>
-      <y>190</y>
+      <y>240</y>
       <width>141</width>
       <height>31</height>
      </rect>
@@ -365,6 +363,30 @@ QPushButton:pressed{
     </property>
     <property name="styleSheet">
      <string notr="true"/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="accountBalanceLabel">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>180</y>
+      <width>351</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Bahnschrift</family>
+      <pointsize>17</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgba(255, 255, 255,0);
+color: rgb(255, 255, 255);
+</string>
+    </property>
+    <property name="text">
+     <string>Your account balance: </string>
     </property>
    </widget>
   </widget>
