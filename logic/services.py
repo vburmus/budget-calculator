@@ -107,10 +107,12 @@ class UserService:
         else:
             return False
 
-    def add_category_user(self, user: User, category: Category):
+    def add_category_user(self, user: User, name: str):
+        category = Category(name=name)
         if self.is_user_has_category(user, category):
             return False, f"Category {category.name} exists"
         if self.category_service.is_category_exist(category.name):
+            category.id = self.category_service.get_category_by_name(name).id
             return True, self.user_category_repository.create(
                 UserCategory(user=user, category=category))
         else:
@@ -119,11 +121,21 @@ class UserService:
                 return True, self.user_category_repository.create(UserCategory(user=user, category=success))
             return False, message
 
-    # TODO
-    def delete_category_from_user(self, user: User, category: Category):
+    def delete_category_from_user(self, user: User, name: str):
+
+        if not self.category_service.is_category_exist(name):
+            return False, "There is no such category"
+        category = Category(name=name)
         if not self.is_user_has_category(user=user, category=category):
             return False, "Wrong category"
-        return True, f"Successfully deleted {category.name}"
+        else:
+            category = self.category_service.get_category_by_name(name)
+            user_category = UserCategory(user=user, category=category)
+            self.user_category_repository.delete(user_category)
+
+            if self.category_service.get_category_count(category) == 0:
+                self.category_service.delete(category)
+            return True, f"Successfully deleted {category.name}"
 
 
 class AccountService:
@@ -203,6 +215,7 @@ class CategoryService:
 
     def __init__(self):
         self.category_repository = CategoryRepository()
+        self.user_has_category_repository = UserHasCategoryRepository()
 
     def create(self, name):
         logger.info(f"Creating category with name {name}...")
@@ -215,7 +228,7 @@ class CategoryService:
     def get_category_by_id(self, id: int):
         return self.category_repository.get_by_param(id)
 
-    def get_account_by_name(self, name: str):
+    def get_category_by_name(self, name: str):
         return self.category_repository.get_by_param(name)
 
     def update(self, category: Category, name: str):
@@ -242,6 +255,9 @@ class CategoryService:
             return True
         else:
             return False
+
+    def get_category_count(self, category: Category):
+        return self.user_has_category_repository.get_by_param(category)
 
 
 class TransactionService():
