@@ -20,3 +20,11 @@ class DataValidation:
         hash_algorithm.update(password.encode('utf-8'))
         encoded_password = hash_algorithm.hexdigest()
         return encoded_password
+
+    @staticmethod
+    def isfloat(num):
+        try:
+            float(num)
+            return True
+        except ValueError:
+            return False

@@ -117,3 +117,13 @@ DEFAULT CHARACTER SET = utf8mb3;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+ALTER TABLE `mydb`.`transaction`
+DROP FOREIGN KEY `fk_Spend_Category1`;
+ALTER TABLE `mydb`.`transaction`
+CHANGE COLUMN `category_id` `category_id` BIGINT NULL ;
+ALTER TABLE `mydb`.`transaction`
+ADD CONSTRAINT `fk_Spend_Category1`
+  FOREIGN KEY (`category_id`)
+  REFERENCES `mydb`.`category` (`id`)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE;
