@@ -93,6 +93,7 @@ class MainPage(QWidget):
         self.addAccountButton.clicked.connect(self.goto_adding_new_account)
         self.manageAccButton.clicked.connect(self.manage_account)
         self.manageCatButton.clicked.connect(self.goto_manage_categories_page)
+        self.addTransactionButton.clicked.connect(self.goto_add_transaction_page)
 
         self.account_service = AccountService()
         self.user = user
@@ -150,6 +151,12 @@ class MainPage(QWidget):
     def goto_manage_categories_page(self):
         manageCat = ManageCategoriesPage(self.user)
         widget.addWidget(manageCat)
+        widget.setFixedSize(538, 768)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+
+    def goto_add_transaction_page(self):
+        addTrans = AddTransactionPage(self.user, self.current_account)
+        widget.addWidget(addTrans)
         widget.setFixedSize(538, 768)
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
@@ -396,6 +403,48 @@ class AddCategoryPage(QWidget):
             self.communicateTextLabel.setText(message)
 
         ApplicationService.clear_fields([self.CategoryNameText])
+
+
+class AddTransactionPage(QWidget):
+    def __init__(self, user, account):
+        super(AddTransactionPage, self).__init__()
+        uic.loadUi("ui/AddTransactionPage.ui", self)
+
+        self.user_service = UserService()
+        self.user = user
+
+        self.communicateTextLabel.setText("")
+
+        self.exitButton.clicked.connect(self.exit)
+        self.addTransButton.clicked.connect(self.add_transaction)
+
+        user_categories = self.user_service.get_user_categories(self.user)
+        self.current_category = None
+
+        if len(user_categories) != 0:
+            for category in user_categories:
+                self.categoriesComboBox.addItem(category.name)
+            self.category_changed()
+
+        self.categoriesComboBox.currentTextChanged.connect(self.category_changed)
+
+    def category_changed(self):
+        logger.info(f"Changed category to {self.categoriesComboBox.currentText()}")
+
+        user_categories = self.user_service.get_user_categories(self.user)
+
+        self.current_category = user_categories[self.categoriesComboBox.currentIndex()]
+
+    def exit(self):
+        mainWindow = MainPage(self.user)
+        widget.addWidget(mainWindow)
+        widget.setFixedSize(1325, 788)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+
+    def add_transaction(self):
+        pass
+
+
 
 
 if __name__ == '__main__':
