@@ -92,6 +92,7 @@ class MainPage(QWidget):
         self.settingsButton.clicked.connect(self.user_settings)
         self.addAccountButton.clicked.connect(self.goto_adding_new_account)
         self.manageAccButton.clicked.connect(self.manage_account)
+        self.manageCatButton.clicked.connect(self.goto_manage_categories_page)
 
         self.account_service = AccountService()
         self.user = user
@@ -145,6 +146,12 @@ class MainPage(QWidget):
             widget.addWidget(manageAcc)
             widget.setFixedSize(538, 768)
             widget.setCurrentIndex(widget.currentIndex() + 1)
+
+    def goto_manage_categories_page(self):
+        manageCat = ManageCategoriesPage(self.user)
+        widget.addWidget(manageCat)
+        widget.setFixedSize(538, 768)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
 class UserSettingsPage(QWidget):
@@ -286,12 +293,49 @@ class ManageAccountPage(QWidget):
             widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
+class ManageCategoriesPage(QWidget):
+    def __init__(self, user):
+        super(ManageCategoriesPage, self).__init__()
+        uic.loadUi("ui/ManageCategoriesPage.ui", self)
+
+        self.user = user
+
+        self.exitButton.clicked.connect(self.exit)
+        self.addCatButton.clicked.connect(self.goto_add_category_page)
+
+        # TODO current category placeholder text
+        self.CategoryNameText.setPlaceholderText("")
+        self.communicateTextLabel.setText("")
+
+    def exit(self):
+        mainWindow = MainPage(self.user)
+        widget.addWidget(mainWindow)
+        widget.setFixedSize(1325, 788)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+
+    def goto_add_category_page(self):
+        addCat = AddCategoryPage(self.user)
+        widget.addWidget(addCat)
+        widget.setFixedSize(538, 768)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
+class AddCategoryPage(QWidget):
+    def __init__(self, user):
+        super(AddCategoryPage, self).__init__()
+        uic.loadUi("ui/AddCategoryPage.ui", self)
 
+        self.user = user
 
+        self.exitButton.clicked.connect(self.go_back)
 
+        self.communicateTextLabel.setText("")
 
+    def go_back(self):
+        manageCat = ManageCategoriesPage(self.user)
+        widget.addWidget(manageCat)
+        widget.setFixedSize(538, 768)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
 if __name__ == '__main__':
