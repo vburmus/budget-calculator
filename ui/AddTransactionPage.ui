@@ -51,9 +51,9 @@
   <widget class="QLineEdit" name="AmountText">
    <property name="geometry">
     <rect>
-     <x>150</x>
+     <x>110</x>
      <y>240</y>
-     <width>241</width>
+     <width>321</width>
      <height>41</height>
     </rect>
    </property>
@@ -111,9 +111,9 @@ QLineEdit:focus{
   <widget class="QPushButton" name="addTransButton">
    <property name="geometry">
     <rect>
-     <x>200</x>
+     <x>180</x>
      <y>500</y>
-     <width>141</width>
+     <width>171</width>
      <height>41</height>
     </rect>
    </property>
@@ -218,7 +218,7 @@ QPushButton:pressed{
      <x>140</x>
      <y>150</y>
      <width>261</width>
-     <height>21</height>
+     <height>31</height>
     </rect>
    </property>
    <property name="font">
@@ -264,9 +264,9 @@ QPushButton:pressed{
   <widget class="QLineEdit" name="TransDescrText">
    <property name="geometry">
     <rect>
-     <x>100</x>
+     <x>110</x>
      <y>330</y>
-     <width>341</width>
+     <width>321</width>
      <height>41</height>
     </rect>
    </property>
@@ -324,14 +324,21 @@ QLineEdit:focus{
   <widget class="QComboBox" name="categoriesComboBox">
    <property name="geometry">
     <rect>
-     <x>150</x>
+     <x>110</x>
      <y>420</y>
-     <width>241</width>
+     <width>321</width>
      <height>31</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>Bahnschrift</family>
+     <pointsize>16</pointsize>
+    </font>
+   </property>
    <property name="styleSheet">
     <string notr="true">QComboBox{
+	padding-left: 10px;
 	border-radius: 5px;
 	background-color: rgba(255, 255, 255, 0);
 	border: 2px solid rgb(255, 255, 255);
@@ -344,6 +351,7 @@ QComboBox:hover{
 	border: 2px solid rgb(255, 0, 255);
 	color: white;
 }
+
 QComboBox:pressed{
 	border-radius: 5px;
 	background-color: rgba(255, 255, 255, 0);
@@ -351,9 +359,12 @@ QComboBox:pressed{
 	color: white;
 }
 
-
-
-
+QComboBox QAbstractItemView {
+	background-color:  rgb(255, 0, 255);
+	color: white;
+	selection-background-color: rgb(156, 106, 255);
+	selection-color: white;
+}
 </string>
    </property>
   </widget>
