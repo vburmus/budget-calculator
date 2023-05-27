@@ -617,7 +617,7 @@ QPushButton:pressed{
      <string>Delete current transaction</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="changeTransactionButton_2">
+   <widget class="QPushButton" name="manageCatButton">
     <property name="geometry">
      <rect>
       <x>90</x>

@@ -152,6 +152,9 @@ QLineEdit:focus{
 </string>
    </property>
    <property name="text">
+    <string/>
+   </property>
+   <property name="placeholderText">
     <string>CategoryName</string>
    </property>
   </widget>
