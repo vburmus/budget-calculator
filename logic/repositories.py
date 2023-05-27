@@ -178,9 +178,8 @@ class AccountRepository(ARepository[Account]):
         if account is None:
             return None
         user_repository = UserRepository()
-        user = user_repository.get_by_param(int(account[4]))
-        return Account(id=int(account[0]), name=account[1], balance=float(account[2]),
-                       description=account[3], user=user)
+        user = user_repository.get_by_param(int(account[3]))
+        return Account(id=int(account[0]), name=account[1], description=account[2], user=user, balance=float(account[4]))
 
 
 class CategoryRepository(ARepository[Category]):
