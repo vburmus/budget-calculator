@@ -256,7 +256,7 @@ class CategoryService:
         return self.user_has_category_repository.get_by_param(category)
 
 
-class TransactionService():
+class TransactionService:
     def __init__(self):
         self.transaction_repository = TransactionRepository()
 
@@ -269,3 +269,6 @@ class TransactionService():
 
         transaction = Transaction(amount=float(amount), account=account, description=description, category=category)
         return True, self.transaction_repository.create(transaction)
+
+    def delete(self, transaction: Transaction):
+        self.transaction_repository.delete(transaction)
