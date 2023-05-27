@@ -130,16 +130,17 @@ class AccountService:
     def __init__(self):
         self.account_repository = AccountRepository()
 
-    def create(self, name: str, user: User, balance: str = None, description: str = ""):
-        # if balance:
-        #     if balance.isnumeric() and:
-        #         current = float(balance)
-        #     else:
-        #         return False, f"Wrong format of balance"
+    def create(self, name: str, user: User, balance: str = "0", description: str = ""):
+        if not name:
+            return False, "Name can't be null "
+        if balance.isnumeric():
+            current = float(balance)
+        else:
+            return False, f"Wrong format of balance"
         logger.info(f"Creating account with name {name}...")
         if self.is_account_exists(name, user):
             return False, f"Account {name} exists"
-        account = Account(name=name, user=user, balance=balance, description=description)
+        account = Account(name=name, user=user, balance=current, description=description)
         self.account_repository.create(account)
         return True, f"Successfully created account {name}"
 
@@ -174,8 +175,12 @@ class AccountService:
         return True, f"Account {account.name} successfully deleted"
 
     def is_account_exists(self, name: str, user: User) -> bool:
-        user_accounts_names = [account.name for account in self.account_repository.get_by_param(user)]
-        if name in any(user_accounts_names):
+        user_accounts_names = []
+        for account in self.account_repository.get_by_param(user):
+            user_accounts_names.append(account.name)
+        if len(user_accounts_names) == 0:
+            return False
+        if name in user_accounts_names:
             return True
         else:
             return False
