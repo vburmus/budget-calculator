@@ -103,13 +103,13 @@ CREATE TABLE IF NOT EXISTS `mydb`.`user_has_category` (
   CONSTRAINT `fk_user_has_category_user1`
     FOREIGN KEY (`user_id`)
     REFERENCES `mydb`.`user` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_user_has_category_category1`
     FOREIGN KEY (`category_id`)
     REFERENCES `mydb`.`category` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb3;
 
