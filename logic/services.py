@@ -206,6 +206,7 @@ class CategoryService:
 
     def __init__(self):
         self.category_repository = CategoryRepository()
+        self.user_has_category_repository = UserHasCategoryRepository()
 
     def create(self, name):
         logger.info(f"Creating category with name {name}...")
@@ -218,7 +219,7 @@ class CategoryService:
     def get_category_by_id(self, id: int):
         return self.category_repository.get_by_param(id)
 
-    def get_account_by_name(self, name: str):
+    def get_category_by_name(self, name: str):
         return self.category_repository.get_by_param(name)
 
     def update(self, category: Category, name: str):
@@ -245,6 +246,9 @@ class CategoryService:
             return True
         else:
             return False
+
+    def get_category_count(self, category: Category):
+        return self.user_has_category_repository.get_by_param(category)
 
 
 class TransactionService():
