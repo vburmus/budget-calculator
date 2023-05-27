@@ -96,7 +96,10 @@ class MainPage(QWidget):
         self.addTransactionButton.clicked.connect(self.goto_add_transaction_page)
         self.changeTransactionButton.clicked.connect(self.goto_change_transaction)
 
+        self.transactionsListBox.itemSelectionChanged.connect(self.transaction_chose)
+
         self.account_service = AccountService()
+        self.user_service = UserService()
         self.user = user
 
         self.userName.setText(self.user.login)
@@ -112,6 +115,20 @@ class MainPage(QWidget):
             self.account_changed()
 
         self.comboBoxAccounts.currentTextChanged.connect(self.account_changed)
+
+        if self.current_account:
+            self.current_transaction = None
+            account_transactions = self.account_service.get_account_transactions(self.current_account)
+
+            self.refresh_transactions()
+
+    def refresh_transactions(self):
+        self.transactionsListBox.clear()
+        self.transactionDetails.setText("")
+        for transaction in self.account_service.get_account_transactions(self.current_account):
+            # TODO change transaction representation
+            self.transactionsListBox.addItem(transaction)
+        self.current_transaction = None
 
     # TODO add transactions of the account
     def account_changed(self):

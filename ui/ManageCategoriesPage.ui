@@ -90,31 +90,6 @@ QListWidget{
     <property name="styleSheet">
      <string notr="true"/>
     </property>
-    <item>
-     <property name="text">
-      <string>asd</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>asdasd</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>asdasdasd</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>gggg</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>ffff</string>
-     </property>
-    </item>
    </widget>
   </widget>
   <widget class="QPushButton" name="deleteCategoryButton">
