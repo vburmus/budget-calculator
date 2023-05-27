@@ -26,7 +26,11 @@
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">border-image: url(:/ui/bckimg.jpg);</string>
+    <string notr="true">border-image: url(:/ui/bckimg.jpg);
+
+
+
+</string>
    </property>
    <property name="text">
     <string/>
@@ -124,7 +128,45 @@ QPushButton:pressed{
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color: rgba(255, 0, 0, 30);  border-radius: 20px</string>
+    <string notr="true">.QFrame{
+	background-color: rgba(255, 0, 0, 30);  border-radius: 20px
+}
+.QComboBox{
+	padding-left: 10px;
+	border-radius: 5px;
+	background-color: rgba(255, 255, 255, 0);
+	border: 2px solid rgb(255, 255, 255);
+	color: white;
+}
+
+.QComboBox:hover{
+	border-radius: 5px;
+	background-color: rgba(255, 255, 255, 0);
+	border: 2px solid rgb(255, 0, 255);
+	color: white;
+}
+
+.QComboBox:pressed{
+	border-radius: 5px;
+	background-color: rgba(255, 255, 255, 0);
+	border: 2px solid rgb(156, 106, 255);
+	color: white;
+}
+
+.QComboBox QAbstractItemView {
+	background-color: rgb(170, 85, 255);
+	color: white;
+	selection-background-color: rgb(100, 48, 255);
+	selection-color: white;
+}
+
+
+.QComboBox QListView:item:hover {
+	background-color: black;
+}
+
+
+</string>
    </property>
    <property name="frameShape">
     <enum>QFrame::StyledPanel</enum>
@@ -312,35 +354,30 @@ QPushButton:pressed{
       <x>60</x>
       <y>70</y>
       <width>241</width>
-      <height>31</height>
+      <height>41</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Bahnschrift</family>
+      <pointsize>16</pointsize>
+     </font>
+    </property>
     <property name="styleSheet">
-     <string notr="true">QComboBox{
-	border-radius: 5px;
-	background-color: rgba(255, 255, 255, 0);
-	border: 2px solid rgb(255, 255, 255);
-	color: white;
-}
-
-QComboBox:hover{
-	border-radius: 5px;
-	background-color: rgba(255, 255, 255, 0);
-	border: 2px solid rgb(255, 0, 255);
-	color: white;
-}
-QComboBox:pressed{
-	border-radius: 5px;
-	background-color: rgba(255, 255, 255, 0);
-	border: 2px solid rgb(156, 106, 255);
-	color: white;
-}
-
-
-
+     <string notr="true">
 
 </string>
     </property>
+    <item>
+     <property name="text">
+      <string>moneyg</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>another money</string>
+     </property>
+    </item>
    </widget>
   </widget>
   <widget class="QPushButton" name="settingsButton">
