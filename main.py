@@ -8,9 +8,10 @@ import ui.background_rc
 from logic.services import *
 from loguru import logger
 
+
 class ApplicationService():
     @staticmethod
-    def clear_fields(list_of_lines:List[QLineEdit]):
+    def clear_fields(list_of_lines: List[QLineEdit]):
         for elem in list_of_lines:
             elem.setText("")
 
@@ -90,6 +91,7 @@ class MainPage(QWidget):
         self.signOutButton.clicked.connect(self.sign_out_function)
         self.settingsButton.clicked.connect(self.user_settings)
         self.addAccountButton.clicked.connect(self.goto_adding_new_account)
+        self.manageAccButton.clicked.connect(self.manage_account)
 
         self.account_service = AccountService()
         self.user = user
@@ -118,8 +120,6 @@ class MainPage(QWidget):
         self.accountDescription.setText(self.current_account.description)
         self.accountBalanceLabel.setText("Your account balance: " + str(self.current_account.balance))
 
-
-
     def sign_out_function(self):
         loginWindow = LoginPage()
         widget.addWidget(loginWindow)
@@ -138,6 +138,13 @@ class MainPage(QWidget):
         widget.addWidget(addAcc)
         widget.setFixedSize(538, 768)
         widget.setCurrentIndex(widget.currentIndex() + 1)
+
+    def manage_account(self):
+        if self.current_account:
+            manageAcc = ManageAccountPage(self.user, self.current_account)
+            widget.addWidget(manageAcc)
+            widget.setFixedSize(538, 768)
+            widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
 class UserSettingsPage(QWidget):
@@ -180,8 +187,8 @@ class UserSettingsPage(QWidget):
         success, response = self.user_service.update(self.user, self.passwordText.text(),
                                                      self.userNameTextEdit.text(), self.newPasswordText.text())
 
-        ApplicationService.clear_fields([self.communicateTextLabel,self.userNameTextEdit,
-                                         self.passwordText,self.newPasswordText])
+        ApplicationService.clear_fields([self.communicateTextLabel, self.userNameTextEdit,
+                                         self.passwordText, self.newPasswordText])
 
         if success:
             self.user = response
@@ -222,6 +229,69 @@ class AddAccountPage(QWidget):
         else:
             self.communicateTextLabel.setStyleSheet("color:  rgb(170, 255, 127);")
             self.communicateTextLabel.setText("Account added!")
+
+
+class ManageAccountPage(QWidget):
+    def __init__(self, user, account):
+        super(ManageAccountPage, self).__init__()
+        uic.loadUi("ui/ManageAccountPage.ui", self)
+
+        self.user = user
+        self.account = account
+
+        self.communicateTextLabel.setText("")
+        self.change_text_fields()
+
+        self.submitButton.clicked.connect(self.submit_changes)
+        self.exitButton.clicked.connect(self.exit)
+        self.deleteAccountButton.clicked.connect(self.delete_current_account)
+
+        self.account_service = AccountService()
+
+    def change_text_fields(self):
+        self.AccNameText.setPlaceholderText(self.account.name)
+        self.AccBalanceText.setPlaceholderText(str(self.account.balance))
+
+    def submit_changes(self):
+        success, message_or_account = self.account_service.update(self.account, self.AccNameText.text(),
+                                                                  self.AccDescrText.text(),
+                                                                  self.AccBalanceText.text())
+        if not success:
+            self.communicateTextLabel.setStyleSheet("color: rgb(255, 112, 114);")
+            self.communicateTextLabel.setText(message_or_account)
+        else:
+            self.communicateTextLabel.setStyleSheet("color:  rgb(170, 255, 127);")
+            self.communicateTextLabel.setText("Account changed!")
+            self.account = message_or_account
+            self.change_text_fields()
+        ApplicationService.clear_fields([self.AccNameText, self.AccBalanceText, self.AccDescrText])
+
+    def exit(self):
+        mainWindow = MainPage(self.user)
+        widget.addWidget(mainWindow)
+        widget.setFixedSize(1325, 788)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+
+    # TODO add comunicate text label and change refreshing
+    def delete_current_account(self):
+        if self.account:
+            success, message = self.account_service.delete(self.account)
+            if success:
+                logger.info(message)
+            else:
+                logger.warning(message)
+            mainWindow = MainPage(self.user)
+            widget.addWidget(mainWindow)
+            widget.setFixedSize(1325, 788)
+            widget.setCurrentIndex(widget.currentIndex() + 1)
+
+
+
+
+
+
+
+
 
 
 if __name__ == '__main__':
