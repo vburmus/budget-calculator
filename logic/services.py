@@ -233,11 +233,29 @@ class AccountService:
     def delete_transaction(self, transaction: Transaction):
         self.transaction_repository.delete(transaction)
 
-    def update_transaction(self,transaction:Transaction,amount:str,description:str,category:Category):
-        if not (amount or description):
+    def update_transaction(self, transaction: Transaction, amount: str, description: str, category: Category):
+        if not (amount or description or category):
             return False, f"Credentials can't be null"
+        if float(
+                amount) == transaction.amount or description == transaction.description or category == transaction.category:
+            return False, "Credentials can't be same as previous"
+        if amount:
+            if not DataValidation.isfloat(amount):
+                return False, "Amount must be float"
+            famount = float(amount)
+            correction = transaction.amount - famount
+            transaction.amount = famount
+            transaction.account.balance = transaction.account.balance + correction
+            self.account_repository.update(transaction.account)
+        if description:
+            transaction.description = description
+        if category:
+            transaction.category = category
 
+        return True, self.transaction_repository.update(transaction)
 
+    def get_account_transactions(self, account: Account):
+        return self.transaction_repository.get_by_param(account)
 
 
 class CategoryService:
@@ -289,5 +307,3 @@ class CategoryService:
 
     def get_category_count(self, category: Category):
         return self.user_has_category_repository.get_by_param(category)
-
-
