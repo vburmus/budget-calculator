@@ -101,41 +101,41 @@ class UserService:
         return self.user_category_repository.get_by_param(user)
 
     def is_user_has_category(self, user: User, category: Category) -> bool:
-        user_categories_names = [category.name for category in self.get_user_categories(user)]
-        if category.name in any(user_categories_names):
+        user_categories_names = []
+        for categorydb in self.get_user_categories(user):
+            user_categories_names.append(categorydb.name)
+        if len(user_categories_names) == 0:
+            return False
+        if category.name in user_categories_names:
             return True
         else:
             return False
 
     def add_category_user(self, user: User, name: str):
+        if not name:
+            return False,"Name can't be null"
         category = Category(name=name)
         if self.is_user_has_category(user, category):
             return False, f"Category {category.name} exists"
         if self.category_service.is_category_exist(category.name):
             category.id = self.category_service.get_category_by_name(name).id
-            return True, self.user_category_repository.create(
-                UserCategory(user=user, category=category))
+            return self.user_category_repository.create(
+                UserCategory(user=user, category=category)),"Successfully created category"
         else:
             success, message = self.category_service.create(category.name)
             if success:
-                return True, self.user_category_repository.create(UserCategory(user=user, category=success))
+                return\
+                    self.user_category_repository.create(UserCategory(user=user, category=message)),"Successfully created category"
             return False, message
 
-    def delete_category_from_user(self, user: User, name: str):
+    def delete_category_from_user(self, user: User, category: Category):
+        categorydb = self.category_service.get_category_by_name(category.name)
+        user_category = UserCategory(user=user, category=categorydb)
+        self.user_category_repository.delete(user_category)
 
-        if not self.category_service.is_category_exist(name):
-            return False, "There is no such category"
-        category = Category(name=name)
-        if not self.is_user_has_category(user=user, category=category):
-            return False, "Wrong category"
-        else:
-            category = self.category_service.get_category_by_name(name)
-            user_category = UserCategory(user=user, category=category)
-            self.user_category_repository.delete(user_category)
+        if self.category_service.get_category_count(category) == 0:
+            self.category_service.delete(categorydb)
 
-            if self.category_service.get_category_count(category) == 0:
-                self.category_service.delete(category)
-            return True, f"Successfully deleted {category.name}"
 
 
 class AccountService:
@@ -232,6 +232,8 @@ class CategoryService:
         return self.category_repository.get_by_param(name)
 
     def update(self, category: Category, name: str):
+        if not name:
+            return False, "Updated name can’t be null"
         logger.info(f"Update category {category.name}...")
         if category.name == name:
             return False, "Credentials must be changed to update"

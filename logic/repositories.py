@@ -9,11 +9,11 @@ from logic.entities import User, Account, Category, Transaction, UserCategory
 
 CREATE_NEW_CATEGORY_QUERY = "insert into user_has_category (user_id, category_id) values (?,?)"
 
-SELECT_USERS_CATEGORIES_QUERY = "select * from user_has_repository where user_id = ?"
+SELECT_USERS_CATEGORIES_QUERY = "select * from user_has_category where user_id = ?"
 
-SELECT_CATEGORY_COUNT_QUERY = "select count(*) from user_has_repository where category_id = ?"
+SELECT_CATEGORY_COUNT_QUERY = "select count(*) from user_has_category where category_id = ?"
 
-DELETE_USER_HAS_CATEGORY_QUERY = "delete from user_has_repository where user_id = ? and category_id =?"
+DELETE_USER_HAS_CATEGORY_QUERY = "delete from user_has_category where user_id = ? and category_id =?"
 
 DELETE_TRANSACTION_QUERY = "DELETE FROM transaction WHERE id = ?"
 
@@ -218,7 +218,7 @@ class UserHasCategoryRepository(ARepository[UserCategory]):
     def create(self, user_category: UserCategory) -> UserCategory:
         self.cursor.execute(CREATE_NEW_CATEGORY_QUERY,
                             (user_category.user.id, user_category.category.id))
-        return self.get_last_row("user_has_category")
+        return True
 
     def get_by_param(self, item: User | Category) -> List[Category]:
         if isinstance(item, User):
