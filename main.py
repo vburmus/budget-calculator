@@ -94,6 +94,7 @@ class MainPage(QWidget):
         self.manageAccButton.clicked.connect(self.manage_account)
         self.manageCatButton.clicked.connect(self.goto_manage_categories_page)
         self.addTransactionButton.clicked.connect(self.goto_add_transaction_page)
+        self.changeTransactionButton.clicked.connect(self.goto_change_transaction)
 
         self.account_service = AccountService()
         self.user = user
@@ -157,6 +158,13 @@ class MainPage(QWidget):
     def goto_add_transaction_page(self):
         addTrans = AddTransactionPage(self.user, self.current_account)
         widget.addWidget(addTrans)
+        widget.setFixedSize(538, 768)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+
+    # TODO if transaction chosen
+    def goto_change_transaction(self):
+        changeTrans = ChangeTransactionPage(self.user, self.current_account)
+        widget.addWidget(changeTrans)
         widget.setFixedSize(538, 768)
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
@@ -443,6 +451,45 @@ class AddTransactionPage(QWidget):
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
     def add_transaction(self):
+        pass
+
+
+class ChangeTransactionPage(QWidget):
+    def __init__(self, user, account):
+        super(ChangeTransactionPage, self).__init__()
+        uic.loadUi("ui/ChangeTransactionPage.ui", self)
+
+        self.user_service = UserService()
+        self.user = user
+
+        self.exitButton.clicked.connect(self.exit)
+
+        user_categories = self.user_service.get_user_categories(self.user)
+        self.current_category = None
+
+        if len(user_categories) != 0:
+            for category in user_categories:
+                self.categoriesComboBox.addItem(category.name)
+            self.category_changed()
+
+        self.categoriesComboBox.currentTextChanged.connect(self.category_changed)
+
+        self.submitButton.clicked.connect(self.submit_changes)
+
+    def exit(self):
+        mainWindow = MainPage(self.user)
+        widget.addWidget(mainWindow)
+        widget.setFixedSize(1325, 788)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+
+    def category_changed(self):
+        logger.info(f"Changed category to {self.categoriesComboBox.currentText()}")
+
+        user_categories = self.user_service.get_user_categories(self.user)
+
+        self.current_category = user_categories[self.categoriesComboBox.currentIndex()]
+
+    def submit_changes(self):
         pass
 
 
