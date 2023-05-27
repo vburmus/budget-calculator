@@ -296,8 +296,8 @@ class TransactionRepository(ARepository[Transaction]):
         category_repository = CategoryRepository()
 
         account_repository = AccountRepository()
-        #category = category_repository.get_by_param(int(transaction[5]))
+        category = category_repository.get_by_param(int(transaction[5]))
 
         account = account_repository.get_by_param(int(transaction[4]))
         return Transaction(id=int(transaction[0]), amount=float(transaction[1]), description=transaction[2],
-                           date=transaction[3], account=account)
+                           date=transaction[3], account=account,category=category)
