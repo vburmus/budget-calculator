@@ -307,3 +307,17 @@ class CategoryService:
 
     def get_category_count(self, category: Category):
         return self.user_has_category_repository.get_by_param(category)
+
+
+class TransactionDetailsService:
+    @staticmethod
+    def to_string_short(transaction: Transaction):
+        return f"Amount = {transaction.amount}, date = {transaction.date}, {transaction.category.name}"
+
+    @staticmethod
+    def to_string_long(transaction: Transaction):
+        return f"Amount: {transaction.amount} \n" \
+               f"Date: {transaction.date}\n" \
+               f"Category:  {transaction.category.name} \n" \
+               f"Description: {transaction.description} \n" \
+               f"Account:{transaction.account}"
