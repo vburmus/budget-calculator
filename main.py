@@ -359,15 +359,16 @@ class ManageCategoriesPage(QWidget):
             self.refresh_categories()
 
     def update_category(self):
-        success, message = self.category_service.update(self.current_category, self.CategoryNameText.text())
+        if self.current_category:
+            success, message = self.category_service.update(self.current_category, self.CategoryNameText.text())
 
-        if success:
-            self.refresh_categories()
-        else:
-            self.communicateTextLabel.setText(message)
-            logger.warning(message)
+            if success:
+                self.refresh_categories()
+            else:
+                self.communicateTextLabel.setText(message)
+                logger.warning(message)
 
-        ApplicationService.clear_fields([self.CategoryNameText])
+            ApplicationService.clear_fields([self.CategoryNameText])
 
 
 
