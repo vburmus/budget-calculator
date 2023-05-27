@@ -1,9 +1,10 @@
 from typing import List
 
-from logic.repositories import UserRepository, AccountRepository, CategoryRepository, UserHasCategoryRepository
+from logic.repositories import UserRepository, AccountRepository, CategoryRepository, UserHasCategoryRepository, \
+    TransactionRepository
 from loguru import logger
 from logic.datavalidation import DataValidation
-from logic.entities import User, Account, Category, UserCategory
+from logic.entities import User, Account, Category, UserCategory, Transaction
 
 
 class UserService:
@@ -115,7 +116,7 @@ class UserService:
                 return True, self.user_category_repository.create(UserCategory(user=user, category=success))
             return False, message
 
-    #TODO
+    # TODO
     def delete_category_from_user(self, user: User, category: Category):
         if not self.is_user_has_category(user=user, category=category):
             return False, "Wrong category"
@@ -126,14 +127,14 @@ class AccountService:
 
     def __init__(self):
         self.account_repository = AccountRepository()
+        self.transaction_repository = TransactionRepository()
 
     def create(self, name: str, user: User, balance: str = "0", description: str = ""):
         if not name:
             return False, "Name can't be null "
-        if DataValidation.isfloat(balance):
-            current = float(balance)
-        else:
+        if not DataValidation.isfloat(balance):
             return False, f"Wrong format of balance"
+        current = float(balance)
         logger.info(f"Creating account with name {name}...")
         if self.is_account_exists(name, user):
             return False, f"Account {name} exists"
@@ -160,7 +161,13 @@ class AccountService:
             account.description = description
             logger.info("Description updated")
         if balance:
-            account.balance = balance
+            correction = balance - account.balance
+
+            success, _ = self.transaction_repository.create(
+                Transaction(amount=correction, account=account, description="Correction"))
+            if not success:
+                return False, "Error while correcting"
+
             logger.info("Balance updated")
 
         return True, self.account_repository.update(account)
@@ -193,8 +200,8 @@ class CategoryService:
         if self.is_category_exist(name):
             return False, f"Category {name} exists"
         category = Category(name)
-        self.category_repository.create(category)
-        return True, f"Successfully created category {name}"
+
+        return True, self.category_repository.create(category)
 
     def get_category_by_id(self, id: int):
         return self.category_repository.get_by_param(id)
@@ -226,3 +233,18 @@ class CategoryService:
             return True
         else:
             return False
+
+
+class TransactionService():
+    def __init__(self):
+        self.transaction_repository = TransactionRepository()
+
+    def create(self, amount: str, description: str, account: Account, category: Category):
+        logger.info(f"Creating transaction...")
+        if not amount:
+            return False, f"Amount can't be null"
+        if not DataValidation.isfloat(amount):
+            return False, "Amount must be float"
+
+        transaction = Transaction(amount=float(amount), account=account, description=description, category=category)
+        return True, self.transaction_repository.create(transaction)
