@@ -26,6 +26,11 @@ class UserService:
             user = User(login=login, password=DataValidation.encode_password(password))
             logger.info(f"Entity with login = {login} created")
             self.user_repository.create(user)
+            list_cat = [Category(name="Food"),
+             Category(name="Other"),
+             Category(name="Transport")]
+            for cat in list_cat:
+                self.user_category_repository.create(cat)
         return True, f"Successfully registered {login}"
 
     def login(self, login: str, password: str):
