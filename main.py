@@ -1,6 +1,6 @@
 import sys
 
-from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit
 from PyQt5 import QtWidgets
 from PyQt5 import uic
 import ui.background_rc
@@ -8,6 +8,11 @@ import ui.background_rc
 from logic.services import *
 from loguru import logger
 
+class ApplicationService():
+    @staticmethod
+    def clear_fields(list_of_lines:List[QLineEdit]):
+        for elem in list_of_lines:
+            elem.setText("")
 
 # Login window class
 class LoginPage(QWidget):
@@ -154,10 +159,8 @@ class UserSettingsPage(QWidget):
         success, response = self.user_service.update(self.user, self.passwordText.text(),
                                                      self.userNameTextEdit.text(), self.newPasswordText.text())
 
-        self.communicateTextLabel.setText("")
-        self.userNameTextEdit.setText("")
-        self.passwordText.setText("")
-        self.newPasswordText.setText("")
+        ApplicationService.clear_fields([self.communicateTextLabel,self.userNameTextEdit,
+                                         self.passwordText,self.newPasswordText])
 
         if success:
             self.user = response
@@ -174,7 +177,9 @@ class AddAccountPage(QWidget):
         self.exitButton.clicked.connect(self.exit)
         self.addButton.clicked.connect(self.add_new_account)
 
-        self.acc_service = AccountService()
+        self.communicateTextLabel.setText("")
+
+        self.account_service = AccountService()
         self.user = user
 
     def exit(self):
@@ -184,11 +189,18 @@ class AddAccountPage(QWidget):
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
     def add_new_account(self):
-        name = self.AccNameText.text()
-        description = self.AccDescrText.text()
-        balance = self.AccBalanceText.text()
+        success, message = self.account_service.create(self.AccNameText.text(), self.user,
+                                                       self.AccBalanceText.text(), self.AccDescrText.text())
 
-        # success, message = self.acc_service.create(name, self.user, balance, )
+        ApplicationService.clear_fields([self.AccNameText, self.AccDescrText,
+                                         self.AccBalanceText, self.communicateTextLabel])
+
+        if not success:
+            self.communicateTextLabel.setStyleSheet("color: rgb(255, 112, 114);")
+            self.communicateTextLabel.setText(message)
+        else:
+            self.communicateTextLabel.setStyleSheet("color:  rgb(170, 255, 127);")
+            self.communicateTextLabel.setText("Account added!")
 
 
 if __name__ == '__main__':

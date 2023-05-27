@@ -364,20 +364,8 @@ QPushButton:pressed{
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">
-
-</string>
+     <string notr="true"/>
     </property>
-    <item>
-     <property name="text">
-      <string>moneyg</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>another money</string>
-     </property>
-    </item>
    </widget>
   </widget>
   <widget class="QPushButton" name="settingsButton">
