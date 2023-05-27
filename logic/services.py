@@ -215,6 +215,30 @@ class AccountService:
         else:
             return False
 
+    def create_transaction(self, amount: str, description: str, account: Account, category: Category = None):
+
+        logger.info(f"Creating transaction...")
+        if not amount:
+            return False, f"Amount can't be null"
+        if not DataValidation.isfloat(amount):
+            return False, "Amount must be float"
+
+        transaction = Transaction(amount=float(amount), account=account, description=description)
+        transactiondb = self.transaction_repository.create(transaction)
+
+        self.update(account=account, balance=account.balance - transactiondb.amount)
+
+        return True, transactiondb
+
+    def delete_transaction(self, transaction: Transaction):
+        self.transaction_repository.delete(transaction)
+
+    def update_transaction(self,transaction:Transaction,amount:str,description:str,category:Category):
+        if not (amount or description):
+            return False, f"Credentials can't be null"
+
+
+
 
 class CategoryService:
 
@@ -267,19 +291,3 @@ class CategoryService:
         return self.user_has_category_repository.get_by_param(category)
 
 
-class TransactionService:
-    def __init__(self):
-        self.transaction_repository = TransactionRepository()
-
-    def create(self, amount: str, description: str, account: Account, category: Category = None):
-        logger.info(f"Creating transaction...")
-        if not amount:
-            return False, f"Amount can't be null"
-        if not DataValidation.isfloat(amount):
-            return False, "Amount must be float"
-
-        transaction = Transaction(amount=float(amount), account=account, description=description)
-        return True, self.transaction_repository.create(transaction)
-
-    def delete(self, transaction: Transaction):
-        self.transaction_repository.delete(transaction)
