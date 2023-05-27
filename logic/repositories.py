@@ -33,7 +33,7 @@ SELECT_TRANSACTIONS_BY_ACCOUNT_QUERY = "SELECT * FROM transaction WHERE account_
 SELECT_TRANSACTION_BY_ID_QUERY = "SELECT * FROM transaction WHERE id = ?"
 
 CREATE_TRANSACTION_QUERY = "INSERT INTO transaction" \
-                           " (amount, description, account_id, category_id) VALUES (?,?,?,?,?)"
+                           " (amount, description, account_id) VALUES (?,?,?)"
 
 GET_CATEGORY_BY_ID_QUERY = "SELECT * FROM category WHERE id = ?  "
 GET_CATEGORY_BY_NAME_QUERY = "SELECT * FROM category WHERE name = ?  "
@@ -156,7 +156,7 @@ class AccountRepository(ARepository[Account]):
                 accounts.append(self.parse(account))
             return accounts
         elif isinstance(item, int):
-            self.cursor.execute(GET_ACCOUNT_BY_ID_QUERY, (id,))
+            self.cursor.execute(GET_ACCOUNT_BY_ID_QUERY, (item,))
         else:
             logger.error(f"There is no such option for this type")
             return None
@@ -255,11 +255,12 @@ class UserHasCategoryRepository(ARepository[UserCategory]):
 
 class TransactionRepository(ARepository[Transaction]):
     def create(self, transaction: Transaction) -> Transaction:
+        #TODO category
         self.cursor.execute(
             CREATE_TRANSACTION_QUERY, (transaction.amount,
                                        transaction.description,
                                        transaction.account.id,
-                                       transaction.category.id))
+                                      ))
         return self.get_last_row("transaction")
 
     def get_by_param(self, item: int | Account) -> Transaction | List[Transaction]:
@@ -293,8 +294,8 @@ class TransactionRepository(ARepository[Transaction]):
         category_repository = CategoryRepository()
 
         account_repository = AccountRepository()
-        category = category_repository.get_by_param(int(transaction[5]))
+        #category = category_repository.get_by_param(int(transaction[5]))
 
         account = account_repository.get_by_param(int(transaction[4]))
         return Transaction(id=int(transaction[0]), amount=float(transaction[1]), description=transaction[2],
-                           date=transaction[3], account=account, category=category)
+                           date=transaction[3], account=account)

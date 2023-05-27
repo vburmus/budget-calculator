@@ -130,7 +130,7 @@ class AccountService:
 
     def __init__(self):
         self.account_repository = AccountRepository()
-        self.transaction_repository = TransactionRepository()
+        self.transaction_service = TransactionService()
 
     def create(self, name: str, user: User, balance: str = "0", description: str = ""):
         if not name:
@@ -144,13 +144,16 @@ class AccountService:
         account = Account(name=name, user=user, balance=current, description=description)
         return True, self.account_repository.create(account)
 
-    def get_user_accounts(self, user: User):
+    def get_user_accounts(self, user: User) -> object:
         return self.account_repository.get_by_param(user)
 
     def get_account_by_id(self, id: int):
         return self.account_repository.get_by_param(id)
 
-    def update(self, account: Account, name: str, description: str, balance: float):
+    def update(self, account: Account, name: str, description: str, balance: str):
+        if not (name or description or  balance):
+            return False, "Credentials can't be null"
+
         if account.name == name and account.description == description and account.balance == balance:
             return False, "Credentials must be changed to update"
         logger.info("Updating account...")
@@ -163,21 +166,25 @@ class AccountService:
             account.description = description
             logger.info("Description updated")
         if balance:
-            correction = balance - account.balance
+            if not DataValidation.isfloat(balance):
+                return False, "Error format"
+            correction = float(balance) - account.balance
 
-            success, _ = self.transaction_repository.create(
-                Transaction(amount=correction, account=account, description="Correction"))
+
+            success, transaction = self.transaction_service.create(amount=correction, account=account, description="Correction")
             if not success:
                 return False, "Error while correcting"
+            account.balance = float(balance)
 
             logger.info("Balance updated")
 
         return True, self.account_repository.update(account)
 
+
     def delete(self, account: Account):
         if not self.is_account_exists(account.name, account.user):
             return False, f"Account {account.name} doesn't exist"
-        self.delete(account)
+        self.account_repository.delete(account)
         return True, f"Account {account.name} successfully deleted"
 
     def is_account_exists(self, name: str, user: User) -> bool:
@@ -241,12 +248,12 @@ class TransactionService():
     def __init__(self):
         self.transaction_repository = TransactionRepository()
 
-    def create(self, amount: str, description: str, account: Account, category: Category):
+    def create(self, amount: str, description: str, account: Account, category: Category = None):
         logger.info(f"Creating transaction...")
         if not amount:
             return False, f"Amount can't be null"
         if not DataValidation.isfloat(amount):
             return False, "Amount must be float"
 
-        transaction = Transaction(amount=float(amount), account=account, description=description, category=category)
+        transaction = Transaction(amount=float(amount), account=account, description=description)
         return True, self.transaction_repository.create(transaction)
