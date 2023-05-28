@@ -396,7 +396,7 @@ QPushButton:pressed{
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color: rgba(255, 0, 0, 30); border-radius: 20px;color: black;</string>
+    <string notr="true">background-color: rgba(255, 0, 0, 30); border-radius: 20px;</string>
    </property>
    <property name="frameShape">
     <enum>QFrame::StyledPanel</enum>
@@ -404,6 +404,19 @@ QPushButton:pressed{
    <property name="frameShadow">
     <enum>QFrame::Raised</enum>
    </property>
+   <widget class="QListWidget" name="transactionsListBox">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>70</y>
+      <width>331</width>
+      <height>381</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);</string>
+    </property>
+   </widget>
    <widget class="QLabel" name="transactionsLabel">
     <property name="geometry">
      <rect>
@@ -442,19 +455,6 @@ color: rgb(255, 255, 255);
     </property>
     <property name="orientation">
      <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="QListWidget" name="transactionsListBox">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>60</y>
-      <width>351</width>
-      <height>401</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
     </property>
    </widget>
   </widget>
