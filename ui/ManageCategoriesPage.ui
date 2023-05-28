@@ -340,9 +340,9 @@ QPushButton:pressed{
   <widget class="QLabel" name="communicateTextLabel">
    <property name="geometry">
     <rect>
-     <x>130</x>
+     <x>90</x>
      <y>670</y>
-     <width>261</width>
+     <width>341</width>
      <height>31</height>
     </rect>
    </property>
