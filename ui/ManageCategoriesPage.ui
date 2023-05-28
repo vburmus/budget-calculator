@@ -330,13 +330,32 @@ QPushButton:pressed{
      <height>391</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>Bahnschrift</family>
+     <pointsize>15</pointsize>
+     <weight>50</weight>
+     <italic>false</italic>
+     <bold>false</bold>
+     <kerning>false</kerning>
+    </font>
+   </property>
    <property name="styleSheet">
     <string notr="true">QListWidget{
 	color: white;
-	font: 12pt &quot;Bahnschrift&quot;;	
-	background-color: rgba(91, 0, 121,150);
+	font: 15pt &quot;Bahnschrift&quot;;	
+	background-color: rgba(91, 0, 121,120);
 	border-radius: 20px;
-}</string>
+	padding-top: 20px;
+}
+
+QListWidget::item {
+	margin-top: 10px;
+}
+</string>
+   </property>
+   <property name="verticalScrollBarPolicy">
+    <enum>Qt::ScrollBarAlwaysOff</enum>
    </property>
   </widget>
  </widget>

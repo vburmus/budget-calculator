@@ -396,7 +396,24 @@ QPushButton:pressed{
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color: rgba(255, 0, 0, 30); border-radius: 20px;</string>
+    <string notr="true">QFrame{
+	background-color: rgba(255, 0, 0, 30); 
+	border-radius: 20px;
+}
+
+QListWidget{
+	color: white;
+	font: 15pt &quot;Bahnschrift&quot;;	
+	background-color: rgba(91, 0, 121,120);
+	border-radius: 20px;
+	padding-top: 20px;
+}
+
+QListWidget::item {
+	margin-top:14px;
+}
+
+</string>
    </property>
    <property name="frameShape">
     <enum>QFrame::StyledPanel</enum>
@@ -407,15 +424,28 @@ QPushButton:pressed{
    <widget class="QListWidget" name="transactionsListBox">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>70</y>
-      <width>331</width>
-      <height>381</height>
+      <x>10</x>
+      <y>60</y>
+      <width>351</width>
+      <height>401</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
+     <string notr="true"/>
     </property>
+    <property name="verticalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
+    </property>
+    <item>
+     <property name="text">
+      <string>Category: Psy | Cash: 2000</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Category: HujniaHujniuj | Cash 30000</string>
+     </property>
+    </item>
    </widget>
    <widget class="QLabel" name="transactionsLabel">
     <property name="geometry">
