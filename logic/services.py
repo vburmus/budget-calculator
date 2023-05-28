@@ -169,7 +169,7 @@ class AccountService:
     def get_account_by_id(self, id: int):
         return self.account_repository.get_by_param(id)
 
-    def update(self, account: Account, name: str, description: str, balance: str):
+    def update(self, account: Account, name: str = None, description: str = None, balance: str = None):
         if not (name or description or balance):
             return False, "Credentials can't be null"
 
@@ -189,13 +189,13 @@ class AccountService:
                 return False, "Error format"
             correction = float(balance) - account.balance
 
-            success, transaction = self.transaction_service.create(amount=correction, account=account,
-                                                                   description="Correction")
+            success, transaction = self.create_transaction(amount=correction, account=account,
+                                                           description="Correction")
             if not success:
                 return False, "Error while correcting"
 
             logger.info("Balance updated")
-
+            account.balance = account.balance + correction
         return True, self.account_repository.update(account)
 
     def delete(self, account: Account):
