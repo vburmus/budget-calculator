@@ -216,24 +216,22 @@ class AccountService:
             return False
 
     def create_transaction(self, amount: str, description: str, account: Account, category: Category = None):
-
         logger.info(f"Creating transaction...")
         if not amount:
             return False, f"Amount can't be null"
         if not DataValidation.isfloat(amount):
             return False, "Amount must be float"
-
-        transaction = Transaction(amount=float(amount), account=account, description=description)
-        transactiondb = self.transaction_repository.create(transaction)
-
-        self.update(account=account, balance=account.balance - transactiondb.amount)
+        transactiondb = self.transaction_repository.create(Transaction(amount=float(amount), account=account, description=description,category=category))
+        transactiondb.account.balance = transactiondb.account.balance - transactiondb.amount
+        self.account_repository.update(account=transactiondb.account)
 
         return True, transactiondb
 
     def delete_transaction(self, transaction: Transaction):
         self.transaction_repository.delete(transaction)
 
-    def update_transaction(self, transaction: Transaction, amount: str, description: str, category: Category):
+    def update_transaction(self, transaction: Transaction, amount: str = None, description: str = None,
+                           category: Category = None):
         if not (amount or description or category):
             return False, f"Credentials can't be null"
         if float(
@@ -312,12 +310,16 @@ class CategoryService:
 class TransactionDetailsService:
     @staticmethod
     def to_string_short(transaction: Transaction):
-        return f"Amount = {transaction.amount}, date = {transaction.date}, {transaction.category.name}"
+        str = f"Amount = {transaction.amount}, date = {transaction.date}"
+        if transaction.category is not None:
+            str += ", {transaction.category.name}"
+        return str
 
     @staticmethod
     def to_string_long(transaction: Transaction):
-        return f"Amount: {transaction.amount} \n" \
-               f"Date: {transaction.date}\n" \
-               f"Category:  {transaction.category.name} \n" \
-               f"Description: {transaction.description} \n" \
-               f"Account:{transaction.account}"
+        str = f"Amount: {transaction.amount} \n" \
+              f"Date: {transaction.date}\n" \
+              f"Description: {transaction.description} \n"
+        if transaction.category is not None:
+            str += f"Category:  {transaction.category.name} \n"
+        return str
