@@ -1,8 +1,9 @@
 import sys
 
 from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QListWidget, QListWidgetItem
-from PyQt5 import QtWidgets
-from PyQt5 import uic
+from PyQt5 import QtWidgets, uic
+from PyQt5.QtCore import Qt
+
 import ui.background_rc
 
 from logic.services import *
@@ -186,7 +187,9 @@ class MainPage(QWidget):
         self.account_transactions = self.account_service.get_account_transactions(self.current_account)
         for transaction in self.account_transactions:
             # TODO change transaction representation
-            self.transactionsListBox.addItem(TransactionDetailsService.to_string_short(transaction))
+            item = QListWidgetItem(TransactionDetailsService.to_string_short(transaction))
+            item.setTextAlignment(Qt.AlignCenter)
+            self.transactionsListBox.addItem(item)
         self.current_transaction = None
 
     # TODO add transactions of the account
@@ -361,7 +364,9 @@ class ManageCategoriesPage(QWidget):
         self.categoriesListBox.clear()
         self.CategoryNameText.setPlaceholderText("")
         for category in self.user_service.get_user_categories(self.user):
-            self.categoriesListBox.addItem(category.name)
+            item = QListWidgetItem(category.name)
+            item.setTextAlignment(Qt.AlignCenter)
+            self.categoriesListBox.addItem(item)
         self.current_category = None
 
     def delete_category(self):

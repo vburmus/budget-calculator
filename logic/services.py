@@ -310,9 +310,11 @@ class CategoryService:
 class TransactionDetailsService:
     @staticmethod
     def to_string_short(transaction: Transaction):
-        str = f"Amount = {transaction.amount}, date = {transaction.date}"
+        str = f"Amount: {transaction.amount}\nCategory:"
         if transaction.category is not None:
-            str += ", {transaction.category.name}"
+            str += f" {transaction.category.name}"
+        else:
+            str += f" None"
         return str
 
     @staticmethod
