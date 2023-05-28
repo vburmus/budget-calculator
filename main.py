@@ -19,28 +19,28 @@ def goto_sign_up():
 def goto_main_page(user):
     mainWindow = MainPage(user)
     widget.addWidget(mainWindow)
-    widget.setFixedSize(1325, 788)
+    widget.setFixedSize(1325, 789)
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
 def goto_login_page():
     loginWindow = LoginPage()
     widget.addWidget(loginWindow)
-    widget.setFixedSize(549, 626)
+    widget.setFixedSize(1325, 789)
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
 def goto_user_settings(user):
     userPage = UserSettingsPage(user)
     widget.addWidget(userPage)
-    widget.setFixedSize(538, 768)
+    widget.setFixedSize(1325, 789)
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
 def goto_adding_new_account(user):
     addAcc = AddAccountPage(user)
     widget.addWidget(addAcc)
-    widget.setFixedSize(538, 768)
+    widget.setFixedSize(1325, 789)
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
@@ -48,35 +48,35 @@ def goto_manage_account_page(current_account, user):
     if current_account:
         manageAcc = ManageAccountPage(user, current_account)
         widget.addWidget(manageAcc)
-        widget.setFixedSize(538, 768)
+        widget.setFixedSize(1325, 789)
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
 def goto_change_transaction_page(user, account):
     changeTrans = ChangeTransactionPage(user, account)
     widget.addWidget(changeTrans)
-    widget.setFixedSize(538, 768)
+    widget.setFixedSize(1325, 789)
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
 def goto_add_transaction_page(user, current_account):
     addTrans = AddTransactionPage(user, current_account)
     widget.addWidget(addTrans)
-    widget.setFixedSize(538, 768)
+    widget.setFixedSize(1325, 789)
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
 def goto_manage_categories_page(user):
     manageCat = ManageCategoriesPage(user)
     widget.addWidget(manageCat)
-    widget.setFixedSize(538, 768)
+    widget.setFixedSize(1325, 789)
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
 def goto_add_category_page(user):
     addCat = AddCategoryPage(user)
     widget.addWidget(addCat)
-    widget.setFixedSize(538, 768)
+    widget.setFixedSize(1325, 789)
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
@@ -493,6 +493,6 @@ if __name__ == '__main__':
     startWindow = LoginPage()
     widget = QtWidgets.QStackedWidget()
     widget.addWidget(startWindow)
-    widget.setFixedSize(549, 626)
+    widget.setFixedSize(1325, 789)
     widget.show()
     app.exec_()

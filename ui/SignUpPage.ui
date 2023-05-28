@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>549</width>
-    <height>626</height>
+    <width>1325</width>
+    <height>789</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,21 +21,9 @@
     <rect>
      <x>-10</x>
      <y>-20</y>
-     <width>561</width>
-     <height>651</height>
+     <width>1371</width>
+     <height>821</height>
     </rect>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>561</width>
-     <height>651</height>
-    </size>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>561</width>
-     <height>16777215</height>
-    </size>
    </property>
    <property name="styleSheet">
     <string notr="true">border-image: url(:/ui/bckimg.jpg);</string>
@@ -47,8 +35,8 @@
   <widget class="QLineEdit" name="loginText">
    <property name="geometry">
     <rect>
-     <x>150</x>
-     <y>220</y>
+     <x>530</x>
+     <y>340</y>
      <width>261</width>
      <height>41</height>
     </rect>
@@ -89,8 +77,8 @@ QLineEdit:focus{
   <widget class="QPushButton" name="signUpButton">
    <property name="geometry">
     <rect>
-     <x>150</x>
-     <y>400</y>
+     <x>530</x>
+     <y>520</y>
      <width>261</width>
      <height>41</height>
     </rect>
@@ -128,8 +116,8 @@ QPushButton:pressed{
   <widget class="QLineEdit" name="passwordText">
    <property name="geometry">
     <rect>
-     <x>150</x>
-     <y>280</y>
+     <x>530</x>
+     <y>400</y>
      <width>261</width>
      <height>41</height>
     </rect>
@@ -173,8 +161,8 @@ QLineEdit:focus{
   <widget class="QLabel" name="loginLabel">
    <property name="geometry">
     <rect>
-     <x>180</x>
-     <y>140</y>
+     <x>560</x>
+     <y>260</y>
      <width>221</width>
      <height>41</height>
     </rect>
@@ -192,8 +180,8 @@ QLineEdit:focus{
   <widget class="QLineEdit" name="confirmPasText">
    <property name="geometry">
     <rect>
-     <x>150</x>
-     <y>340</y>
+     <x>530</x>
+     <y>460</y>
      <width>261</width>
      <height>41</height>
     </rect>
@@ -237,10 +225,10 @@ QLineEdit:focus{
   <widget class="QLabel" name="communicateTextLabel">
    <property name="geometry">
     <rect>
-     <x>150</x>
-     <y>190</y>
+     <x>530</x>
+     <y>300</y>
      <width>261</width>
-     <height>21</height>
+     <height>31</height>
     </rect>
    </property>
    <property name="font">
@@ -262,8 +250,8 @@ QLineEdit:focus{
   <widget class="QLabel" name="logo">
    <property name="geometry">
     <rect>
-     <x>180</x>
-     <y>20</y>
+     <x>560</x>
+     <y>140</y>
      <width>211</width>
      <height>121</height>
     </rect>
@@ -278,8 +266,8 @@ QLineEdit:focus{
   <widget class="Line" name="signLine">
    <property name="geometry">
     <rect>
-     <x>180</x>
-     <y>170</y>
+     <x>560</x>
+     <y>290</y>
      <width>211</width>
      <height>20</height>
     </rect>
@@ -291,7 +279,7 @@ QLineEdit:focus{
   <widget class="QPushButton" name="exitButton">
    <property name="geometry">
     <rect>
-     <x>490</x>
+     <x>1270</x>
      <y>10</y>
      <width>51</width>
      <height>51</height>
