@@ -33,6 +33,9 @@ SELECT_TRANSACTIONS_BY_ACCOUNT_QUERY = "SELECT * FROM transaction WHERE account_
 SELECT_TRANSACTION_BY_ID_QUERY = "SELECT * FROM transaction WHERE id = ?"
 
 CREATE_TRANSACTION_QUERY = "INSERT INTO transaction" \
+                           " (amount, description, account_id,category_id) VALUES (?,?,?,?)"
+
+CREATE_TRANSACTION_WITHOUT_CATEGORY_QUERY = "INSERT INTO transaction" \
                            " (amount, description, account_id) VALUES (?,?,?)"
 
 GET_CATEGORY_BY_ID_QUERY = "SELECT * FROM category WHERE id = ?  "
@@ -257,12 +260,19 @@ class UserHasCategoryRepository(ARepository[UserCategory]):
 
 class TransactionRepository(ARepository[Transaction]):
     def create(self, transaction: Transaction) -> Transaction:
-        #TODO category
-        self.cursor.execute(
+        if transaction.category is None:
+            self.cursor.execute(
+            CREATE_TRANSACTION_WITHOUT_CATEGORY_QUERY, (transaction.amount,
+                                       transaction.description,
+                                       transaction.account.id
+                                      ))
+        else:
+            self.cursor.execute(
             CREATE_TRANSACTION_QUERY, (transaction.amount,
                                        transaction.description,
                                        transaction.account.id,
-                                      ))
+                                       transaction.category.id
+                                       ))
         return self.get_last_row("transaction")
 
     def get_by_param(self, item: int | Account) -> Transaction | List[Transaction]:
