@@ -20,28 +20,24 @@ def goto_sign_up():
 def goto_main_page(user):
     mainWindow = MainPage(user)
     widget.addWidget(mainWindow)
-    widget.setFixedSize(1325, 789)
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
 def goto_login_page():
     loginWindow = LoginPage()
     widget.addWidget(loginWindow)
-    widget.setFixedSize(1325, 789)
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
 def goto_user_settings(user):
     userPage = UserSettingsPage(user)
     widget.addWidget(userPage)
-    widget.setFixedSize(1325, 789)
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
 def goto_adding_new_account(user):
     addAcc = AddAccountPage(user)
     widget.addWidget(addAcc)
-    widget.setFixedSize(1325, 789)
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
@@ -49,35 +45,31 @@ def goto_manage_account_page(current_account, user):
     if current_account:
         manageAcc = ManageAccountPage(user, current_account)
         widget.addWidget(manageAcc)
-        widget.setFixedSize(1325, 789)
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
-def goto_change_transaction_page(user, account):
-    changeTrans = ChangeTransactionPage(user, account)
-    widget.addWidget(changeTrans)
-    widget.setFixedSize(1325, 789)
-    widget.setCurrentIndex(widget.currentIndex() + 1)
+def goto_change_transaction_page(user, account, transaction):
+    if transaction:
+        changeTrans = ChangeTransactionPage(user, account, transaction)
+        widget.addWidget(changeTrans)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
 def goto_add_transaction_page(user, current_account):
     addTrans = AddTransactionPage(user, current_account)
     widget.addWidget(addTrans)
-    widget.setFixedSize(1325, 789)
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
 def goto_manage_categories_page(user):
     manageCat = ManageCategoriesPage(user)
     widget.addWidget(manageCat)
-    widget.setFixedSize(1325, 789)
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
 def goto_add_category_page(user):
     addCat = AddCategoryPage(user)
     widget.addWidget(addCat)
-    widget.setFixedSize(1325, 789)
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
@@ -157,7 +149,8 @@ class MainPage(QWidget):
         self.manageCatButton.clicked.connect(lambda: goto_manage_categories_page(self.user))
         self.addTransactionButton.clicked.connect(lambda: goto_add_transaction_page(self.user, self.current_account))
         self.changeTransactionButton.clicked.connect(lambda: goto_change_transaction_page(self.user,
-                                                                                          self.current_account))
+                                                                                          self.current_account,
+                                                                                          self.current_transaction))
         self.deleteTransButton.clicked.connect(self.delete_transaction)
 
         self.transactionsListBox.itemSelectionChanged.connect(self.transaction_chosen)
@@ -189,7 +182,6 @@ class MainPage(QWidget):
             self.transactionsListBox.addItem(item)
         self.current_transaction = None
 
-    # TODO add transactions of the account
     def account_changed(self):
         logger.info(f"Changed account to {self.comboBoxAccounts.currentText()}")
 
@@ -465,13 +457,16 @@ class AddTransactionPage(QWidget):
 
 
 class ChangeTransactionPage(QWidget):
-    def __init__(self, user, account):
+    def __init__(self, user, account, transaction):
         super(ChangeTransactionPage, self).__init__()
         uic.loadUi("ui/ChangeTransactionPage.ui", self)
 
         self.user_service = UserService()
         self.user = user
+        self.account = account
+        self.transaction = transaction
         self.current_category = None
+
 
         self.exitButton.clicked.connect(lambda: goto_main_page(self.user))
         self.submitButton.clicked.connect(self.submit_changes)
