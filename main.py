@@ -158,13 +158,11 @@ class MainPage(QWidget):
         self.addTransactionButton.clicked.connect(lambda: goto_add_transaction_page(self.user, self.current_account))
         self.changeTransactionButton.clicked.connect(lambda: goto_change_transaction_page(self.user,
                                                                                           self.current_account))
-        # self.deleteTransButton.clicked.connect(self.delete_transaction)
+        self.deleteTransButton.clicked.connect(self.delete_transaction)
 
         self.transactionsListBox.itemSelectionChanged.connect(self.transaction_chosen)
 
         self.comboBoxAccounts.currentTextChanged.connect(self.account_changed)
-
-        # TODO add transactions of the account
 
         self.current_account = None
         self.loading_user_accounts(self.account_service.get_user_accounts(self.user))
@@ -186,7 +184,6 @@ class MainPage(QWidget):
         self.transactionDetails.setText("")
         self.account_transactions = self.account_service.get_account_transactions(self.current_account)
         for transaction in self.account_transactions:
-            # TODO change transaction representation
             item = QListWidgetItem(TransactionDetailsService.to_string_short(transaction))
             item.setTextAlignment(Qt.AlignCenter)
             self.transactionsListBox.addItem(item)
@@ -201,6 +198,8 @@ class MainPage(QWidget):
         self.current_account = user_accounts[self.comboBoxAccounts.currentIndex()]
         self.accountDescription.setText(self.current_account.description)
         self.accountBalanceLabel.setText("Your account balance: " + str(self.current_account.balance))
+
+        # THIS LOADS CATEGORIES!
         self.refresh_transactions()
 
     def transaction_chosen(self):
@@ -212,6 +211,11 @@ class MainPage(QWidget):
         self.current_transaction = self.account_transactions[self.transactionsListBox.row(selected_item)]
 
         self.transactionDetails.setText(TransactionDetailsService.to_string_long(self.current_transaction))
+
+    def delete_transaction(self):
+        if self.current_transaction:
+            self.account_service.delete_transaction(self.current_transaction)
+            self.refresh_transactions()
 
 
 class UserSettingsPage(QWidget):
