@@ -164,19 +164,20 @@ class MainPage(QWidget):
             self.current_transaction = None
             self.account_transactions = self.account_service.get_account_transactions(self.current_account)
             self.current_transaction_index = -1
-            self.refresh_transactions()
+            #self.refresh_transactions()
 
     def loading_user_accounts(self, user_accounts):
         if len(user_accounts) != 0:
             for account in user_accounts:
                 self.comboBoxAccounts.addItem(account.name)
-            self.account_changed()
+            #self.account_changed()
 
     def refresh_transactions(self):
         self.transactionsListBox.clear()
         self.transactionDetails.setText("")
         self.account_transactions = self.account_service.get_account_transactions(self.current_account)
         for transaction in self.account_transactions:
+            logger.info(f"Transaction {transaction.amount} added")
             item = QListWidgetItem(TransactionDetailsService.to_string_short(transaction))
             item.setTextAlignment(Qt.AlignCenter)
             self.transactionsListBox.addItem(item)
