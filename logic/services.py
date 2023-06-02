@@ -38,7 +38,7 @@ class UserService:
         logger.info(f"User with login {login} wants to login.")
         if not (login and password):
             return False, "Fill all fields"
-        if self.is_user_exists(login,case_sensitive=True):
+        if self.is_user_exists(login, case_sensitive=True):
             user = self.user_repository.get_by_param(login)
             logger.info(f"User with {login} found.")
             if DataValidation.is_password_valid(user.password, password):
@@ -96,8 +96,8 @@ class UserService:
         self.user_repository.delete(user)
         return True, f"User {user.login} successfully deleted"
 
-    def is_user_exists(self, login: str,case_sensitive:bool = False) -> bool:
-        user = self.user_repository.get_by_param(login,case_sensitive)
+    def is_user_exists(self, login: str, case_sensitive: bool = False) -> bool:
+        user = self.user_repository.get_by_param(login, case_sensitive)
         if user:
             return True
         else:
@@ -226,14 +226,13 @@ class AccountService:
 
         return True, transactiondb
 
-    def update_balance(self,account,balance):
+    def update_balance(self, account, balance):
         account.balance = balance
         self.account_repository.update(account)
 
     def delete_transaction(self, transaction: Transaction):
         self.transaction_repository.delete(transaction)
-        self.update_balance(account=transaction.account,balance=transaction.account.balance - transaction.amount )
-
+        self.update_balance(account=transaction.account, balance=transaction.account.balance - transaction.amount)
 
     def update_transaction(self, transaction: Transaction, amount: str = None, description: str = None,
                            category: Category = None):
