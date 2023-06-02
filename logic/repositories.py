@@ -277,7 +277,7 @@ class TransactionRepository(ARepository[Transaction]):
 
     def get_by_param(self, item: int | Account) -> Transaction | List[Transaction]:
         if isinstance(item, int):
-            self.cursor.execute(SELECT_TRANSACTION_BY_ID_QUERY, (id,))
+            self.cursor.execute(SELECT_TRANSACTION_BY_ID_QUERY, (item,))
             result = self.cursor.fetchone()
             transaction = self.parse(result)
             return transaction
@@ -293,7 +293,7 @@ class TransactionRepository(ARepository[Transaction]):
     def update(self, transaction: Transaction) -> Transaction:
         self.cursor.execute(UPDATE_TRANSACTION_QUERY, (transaction.amount,
                                                        transaction.description,
-                                                       transaction.category.id))
+                                                       transaction.category.id,transaction.id))
         return self.get_by_param(transaction.id)
 
     def delete(self, transaction: Transaction) -> None:

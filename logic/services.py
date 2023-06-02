@@ -234,6 +234,8 @@ class AccountService:
                            category: Category = None):
         if not (amount or description or category):
             return False, f"Credentials can't be null"
+        if not DataValidation.isfloat(amount):
+            return False, "Amount must be float"
         if float(
                 amount) == transaction.amount or description == transaction.description or category == transaction.category:
             return False, "Credentials can't be same as previous"
@@ -314,7 +316,7 @@ class TransactionDetailsService:
         if transaction.category is not None:
             str += f" {transaction.category.name}"
         else:
-            str += f" None"
+            str += f" System operation"
         return str
 
     @staticmethod
