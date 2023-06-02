@@ -7,6 +7,8 @@ from loguru import logger
 
 from logic.entities import User, Account, Category, Transaction, UserCategory
 
+IS_USER_HAS_CATEGORY_QUERY = "select count(*) from user_has_category as u join category as c on u.category_id = c.id where user_id = ? and  c.id =? and c.name =?"
+
 CREATE_NEW_CATEGORY_QUERY = "insert into user_has_category (user_id, category_id) values (?,?)"
 
 SELECT_USERS_CATEGORIES_QUERY = "select c.id,c.name from user_has_category as u join category as c on u.category_id = c.id  where user_id = ?"
@@ -237,7 +239,7 @@ class UserHasCategoryRepository(ARepository[UserCategory]):
             return self.cursor.fetchone()
         elif isinstance(item, List):
             self.cursor.execute(
-                "select count(*) from user_has_category as u join category as c on u.category_id = c.id where user_id = ? and  c.id =? and c.name =?",
+                IS_USER_HAS_CATEGORY_QUERY,
                 (item[0].id, item[1].id, item[1].name))
             return self.cursor.fetchone()
 
