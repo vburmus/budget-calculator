@@ -169,10 +169,7 @@ class MainPage(QWidget):
         self.manageCatButton.clicked.connect(lambda: goto_manage_categories_page(self.user, self))
         self.addTransactionButton.clicked.connect(lambda: goto_add_transaction_page(self.user, self.current_account,
                                                                                     self))
-        self.changeTransactionButton.clicked.connect(lambda: goto_change_transaction_page(self.user,
-                                                                                          self.current_account,
-                                                                                          self.current_transaction,
-                                                                                          self))
+        self.changeTransactionButton.clicked.connect(self.update_transaction)
         self.deleteTransButton.clicked.connect(self.delete_transaction)
 
         self.transactionsListBox.itemSelectionChanged.connect(self.transaction_chosen)
@@ -187,6 +184,10 @@ class MainPage(QWidget):
             self.account_transactions = self.account_service.get_account_transactions(self.current_account)
             self.current_transaction_index = -1
             self.refresh_transactions()
+
+    def update_transaction(self):
+        if self.current_transaction:
+            goto_change_transaction_page(self.user, self.current_account, self.current_transaction, self)
 
     def loading_user_accounts(self, user_accounts):
         if len(user_accounts) != 0:
@@ -484,10 +485,15 @@ class ChangeTransactionPage(QWidget):
         uic.loadUi("ui/ChangeTransactionPage.ui", self)
 
         self.user_service = UserService()
+        self.account_service = AccountService()
         self.user = user
         self.account = account
         self.transaction = transaction
         self.current_category = None
+
+        self.communicateTextLabel.setText("")
+        self.AmountText.setPlaceholderText(str(self.transaction.amount))
+        self.TransDescrText.setPlaceholderText(self.transaction.description)
 
         self.exitButton.clicked.connect(lambda: goto_main_page(self.user, self))
         self.submitButton.clicked.connect(self.submit_changes)
@@ -500,7 +506,6 @@ class ChangeTransactionPage(QWidget):
         if len(user_categories) != 0:
             for category in user_categories:
                 self.categoriesComboBox.addItem(category.name)
-            self.category_changed()
 
     def category_changed(self):
         logger.info(f"Changed category to {self.categoriesComboBox.currentText()}")
@@ -510,7 +515,13 @@ class ChangeTransactionPage(QWidget):
         self.current_category = user_categories[self.categoriesComboBox.currentIndex()]
 
     def submit_changes(self):
-        pass
+        success, respond = self.account_service.update_transaction(self.transaction, self.AmountText.text(),
+                                                                   self.TransDescrText.text(),
+                                                                   self.current_category)
+        if success:
+            goto_main_page(self.user, self)
+        else:
+            self.communicateTextLabel.setText(respond)
 
 
 if __name__ == '__main__':

@@ -51,9 +51,9 @@
   <widget class="QLineEdit" name="AmountText">
    <property name="geometry">
     <rect>
-     <x>510</x>
+     <x>490</x>
      <y>290</y>
-     <width>301</width>
+     <width>341</width>
      <height>41</height>
     </rect>
    </property>
@@ -243,9 +243,9 @@ QPushButton:pressed{
   <widget class="QLabel" name="enterDescrLabel">
    <property name="geometry">
     <rect>
-     <x>510</x>
+     <x>480</x>
      <y>330</y>
-     <width>301</width>
+     <width>361</width>
      <height>51</height>
     </rect>
    </property>
@@ -267,9 +267,9 @@ QPushButton:pressed{
   <widget class="QLineEdit" name="TransDescrText">
    <property name="geometry">
     <rect>
-     <x>510</x>
+     <x>490</x>
      <y>380</y>
-     <width>301</width>
+     <width>341</width>
      <height>41</height>
     </rect>
    </property>
@@ -330,9 +330,9 @@ QLineEdit:focus{
   <widget class="QComboBox" name="categoriesComboBox">
    <property name="geometry">
     <rect>
-     <x>510</x>
+     <x>490</x>
      <y>470</y>
-     <width>301</width>
+     <width>341</width>
      <height>31</height>
     </rect>
    </property>
