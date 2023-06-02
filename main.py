@@ -11,65 +11,85 @@ from loguru import logger
 
 
 # goto pages methods
-def goto_sign_up():
+def goto_sign_up(current_window):
     createAccWindow = SignUpPage()
     widget.addWidget(createAccWindow)
+
+    widget.removeWidget(current_window)
+    current_window.deleteLater()
+
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
-def goto_main_page(user):
+def goto_main_page(user, current_window):
     mainWindow = MainPage(user)
     widget.addWidget(mainWindow)
+    widget.removeWidget(current_window)
+    current_window.deleteLater()
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
-def goto_login_page():
+def goto_login_page(current_window):
     loginWindow = LoginPage()
     widget.addWidget(loginWindow)
+    widget.removeWidget(current_window)
+    current_window.deleteLater()
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
-def goto_user_settings(user):
+def goto_user_settings(user, current_window):
     userPage = UserSettingsPage(user)
     widget.addWidget(userPage)
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
-def goto_adding_new_account(user):
+def goto_adding_new_account(user, current_window):
     addAcc = AddAccountPage(user)
     widget.addWidget(addAcc)
+    widget.removeWidget(current_window)
+    current_window.deleteLater()
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
-def goto_manage_account_page(current_account, user):
+def goto_manage_account_page(current_account, user, current_window):
     if current_account:
         manageAcc = ManageAccountPage(user, current_account)
         widget.addWidget(manageAcc)
+        widget.removeWidget(current_window)
+        current_window.deleteLater()
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
-def goto_change_transaction_page(user, account, transaction):
+def goto_change_transaction_page(user, account, transaction, current_window):
     if transaction:
         changeTrans = ChangeTransactionPage(user, account, transaction)
         widget.addWidget(changeTrans)
+        widget.removeWidget(current_window)
+        current_window.deleteLater()
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
-def goto_add_transaction_page(user, current_account):
+def goto_add_transaction_page(user, current_account, current_window):
     addTrans = AddTransactionPage(user, current_account)
     widget.addWidget(addTrans)
+    widget.removeWidget(current_window)
+    current_window.deleteLater()
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
-def goto_manage_categories_page(user):
+def goto_manage_categories_page(user, current_window):
     manageCat = ManageCategoriesPage(user)
     widget.addWidget(manageCat)
+    widget.removeWidget(current_window)
+    current_window.deleteLater()
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
-def goto_add_category_page(user):
+def goto_add_category_page(user, current_window):
     addCat = AddCategoryPage(user)
     widget.addWidget(addCat)
+    widget.removeWidget(current_window)
+    current_window.deleteLater()
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
@@ -87,7 +107,7 @@ class LoginPage(QWidget):
         uic.loadUi("ui/LoginPage.ui", self)
 
         self.signInButton.clicked.connect(self.login_function)
-        self.createAccButton.clicked.connect(goto_sign_up)
+        self.createAccButton.clicked.connect(lambda: goto_sign_up(self))
 
         logger.add("logs/application.log", rotation="500 MB", level="INFO")
         self.user_service = UserService()
@@ -102,7 +122,7 @@ class LoginPage(QWidget):
             self.communicateTextLabel.setText("")
             logger.success(message)
 
-            goto_main_page(success)
+            goto_main_page(success, self)
 
 
 # Sign up window class
@@ -112,7 +132,7 @@ class SignUpPage(QWidget):
         uic.loadUi("ui/SignUpPage.ui", self)
 
         self.signUpButton.clicked.connect(self.sign_up_function)
-        self.exitButton.clicked.connect(goto_login_page)
+        self.exitButton.clicked.connect(lambda: goto_login_page(self))
 
         self.user_service = UserService()
 
@@ -126,7 +146,7 @@ class SignUpPage(QWidget):
         else:
             self.communicateTextLabel.setText("")
             logger.success(message)
-            goto_login_page()
+            goto_login_page(self)
 
 
 class MainPage(QWidget):
@@ -142,15 +162,17 @@ class MainPage(QWidget):
         self.transactionDetails.setText("")
         self.userName.setText(self.user.login)
 
-        self.signOutButton.clicked.connect(goto_login_page)
-        self.settingsButton.clicked.connect(lambda: goto_user_settings(self.user))
-        self.addAccountButton.clicked.connect(lambda: goto_adding_new_account(self.user))
-        self.manageAccButton.clicked.connect(lambda: goto_manage_account_page(self.current_account, self.user))
-        self.manageCatButton.clicked.connect(lambda: goto_manage_categories_page(self.user))
-        self.addTransactionButton.clicked.connect(lambda: goto_add_transaction_page(self.user, self.current_account))
+        self.signOutButton.clicked.connect(lambda: goto_login_page(self))
+        self.settingsButton.clicked.connect(lambda: goto_user_settings(self.user, self))
+        self.addAccountButton.clicked.connect(lambda: goto_adding_new_account(self.user, self))
+        self.manageAccButton.clicked.connect(lambda: goto_manage_account_page(self.current_account, self.user, self))
+        self.manageCatButton.clicked.connect(lambda: goto_manage_categories_page(self.user, self))
+        self.addTransactionButton.clicked.connect(lambda: goto_add_transaction_page(self.user, self.current_account,
+                                                                                    self))
         self.changeTransactionButton.clicked.connect(lambda: goto_change_transaction_page(self.user,
                                                                                           self.current_account,
-                                                                                          self.current_transaction))
+                                                                                          self.current_transaction,
+                                                                                          self))
         self.deleteTransButton.clicked.connect(self.delete_transaction)
 
         self.transactionsListBox.itemSelectionChanged.connect(self.transaction_chosen)
@@ -218,7 +240,7 @@ class UserSettingsPage(QWidget):
         self.user_service = UserService()
         self.user = user
 
-        self.exitButton.clicked.connect(lambda: goto_main_page(self.user))
+        self.exitButton.clicked.connect(lambda: goto_main_page(self.user, self))
         self.submitButton.clicked.connect(self.submit_changes)
         self.deleteAccountButton.clicked.connect(self.delete_account)
 
@@ -228,7 +250,7 @@ class UserSettingsPage(QWidget):
     def delete_account(self):
         success, message = self.user_service.delete(self.user, self.passwordText.text())
         if success:
-            goto_login_page()
+            goto_login_page(self)
         else:
             self.communicateTextLabel.setText(message)
             self.passwordText.setText("")
@@ -259,7 +281,7 @@ class AddAccountPage(QWidget):
         self.account_service = AccountService()
         self.user = user
 
-        self.exitButton.clicked.connect(lambda: goto_main_page(self.user))
+        self.exitButton.clicked.connect(lambda: goto_main_page(self.user, self))
         self.addButton.clicked.connect(self.add_new_account)
 
         self.communicateTextLabel.setText("")
@@ -292,7 +314,7 @@ class ManageAccountPage(QWidget):
         self.change_text_fields()
 
         self.submitButton.clicked.connect(self.submit_changes)
-        self.exitButton.clicked.connect(lambda: goto_main_page(self.user))
+        self.exitButton.clicked.connect(lambda: goto_main_page(self.user, self))
         self.deleteAccountButton.clicked.connect(self.delete_current_account)
 
     def change_text_fields(self):
@@ -320,7 +342,7 @@ class ManageAccountPage(QWidget):
                 logger.info(message)
             else:
                 logger.warning(message)
-            goto_main_page(self.user)
+            goto_main_page(self.user, self)
 
 
 class ManageCategoriesPage(QWidget):
@@ -333,7 +355,7 @@ class ManageCategoriesPage(QWidget):
         self.category_service = CategoryService()
         self.current_category = None
 
-        self.exitButton.clicked.connect(lambda: goto_main_page(self.user))
+        self.exitButton.clicked.connect(lambda: goto_main_page(self.user, self))
         self.addCatButton.clicked.connect(lambda: goto_add_category_page(self.user))
         self.deleteCategoryButton.clicked.connect(self.delete_category)
         self.submitButton.clicked.connect(self.update_category)
@@ -394,7 +416,7 @@ class AddCategoryPage(QWidget):
         self.user = user
         self.user_service = UserService()
 
-        self.exitButton.clicked.connect(lambda: goto_manage_categories_page(self.user))
+        self.exitButton.clicked.connect(lambda: goto_manage_categories_page(self.user, self))
         self.addButton.clicked.connect(self.add_category)
 
         self.communicateTextLabel.setText("")
@@ -425,7 +447,7 @@ class AddTransactionPage(QWidget):
 
         self.communicateTextLabel.setText("")
 
-        self.exitButton.clicked.connect(lambda: goto_main_page(self.user))
+        self.exitButton.clicked.connect(lambda: goto_main_page(self.user, self))
         self.addTransButton.clicked.connect(self.add_transaction)
 
         self.categoriesComboBox.currentTextChanged.connect(self.category_changed)
@@ -467,8 +489,7 @@ class ChangeTransactionPage(QWidget):
         self.transaction = transaction
         self.current_category = None
 
-
-        self.exitButton.clicked.connect(lambda: goto_main_page(self.user))
+        self.exitButton.clicked.connect(lambda: goto_main_page(self.user, self))
         self.submitButton.clicked.connect(self.submit_changes)
 
         self.categoriesComboBox.currentTextChanged.connect(self.category_changed)
