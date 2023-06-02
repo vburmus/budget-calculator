@@ -50,7 +50,8 @@ DELETE_USER_QUERY = "DELETE FROM user WHERE login = ?"
 
 GET_USER_BY_ID_QUERY = "SELECT * FROM user WHERE id = ?"
 
-GET_USER_BY_LOGIN_QUERY = "SELECT * FROM user WHERE BINARY login = ?"
+GET_USER_BY_LOGIN_SENSITIVE_QUERY = "SELECT * FROM user WHERE BINARY login = ?"
+GET_USER_BY_LOGIN_QUERY = "SELECT * FROM user WHERE  login = ?"
 
 CREATE_USER_QUERY = "INSERT INTO user (login, password) VALUES (?, ?)"
 
@@ -63,6 +64,9 @@ GET_ACCOUNT_BY_ID_QUERY = "SELECT * FROM account WHERE id = ?"
 UPDATE_ACCOUNT_QUERY = "UPDATE account SET name = ?, description = ?, user_id = ?, balance = ? WHERE  id = ?"
 
 LAST_ROW_QUERY = "SELECT * FROM {} ORDER BY id DESC LIMIT 1"
+
+LAST_ROW_FOR_TRANSACTION_QUERY = "SELECT t.id,t.amount,t.description,t.date,t.account_id,c.id,c.name FROM transaction " \
+                                 "as t left join category as c on c.id = t.category_id ORDER BY t.id DESC LIMIT 1"
 
 
 class ParamType(Enum):
@@ -98,7 +102,10 @@ class ARepository(Generic[T], ABC):
         pass
 
     def get_last_row(self, table) -> T:
-        self.cursor.execute(LAST_ROW_QUERY.format(table))
+        if table == "transaction":
+            self.cursor.execute(LAST_ROW_FOR_TRANSACTION_QUERY)
+        else:
+            self.cursor.execute(LAST_ROW_QUERY.format(table))
         result = self.cursor.fetchone()
         item = self.parse(result)
         return item
@@ -115,12 +122,15 @@ class UserRepository(ARepository[User]):
         self.cursor.execute(CREATE_USER_QUERY, (user.login, user.password))
         return self.get_last_row("user")
 
-    def get_by_param(self, param: str | int) -> User | None:
+    def get_by_param(self, param: str | int, case_sensitive:bool = False) -> User | None:
 
         if isinstance(param, int):
             self.cursor.execute(GET_USER_BY_ID_QUERY, (param,))
         elif isinstance(param, str):
-            self.cursor.execute(GET_USER_BY_LOGIN_QUERY, (param,))
+            if case_sensitive:
+                self.cursor.execute(GET_USER_BY_LOGIN_SENSITIVE_QUERY, (param,))
+            else:
+                self.cursor.execute(GET_USER_BY_LOGIN_QUERY, (param,))
         else:
             logger.error(f"There is no  such option for this type")
             return None
@@ -307,7 +317,7 @@ class TransactionRepository(ARepository[Transaction]):
         if transaction is None:
             return None
 
-        if not transaction[5]:
+        if not (transaction[5] and transaction[6]):
             return Transaction(id=int(transaction[0]), account=None, amount=float(transaction[1]),
                                description=transaction[2],
                                date=transaction[3])
