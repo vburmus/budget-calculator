@@ -125,6 +125,9 @@ class Account:
     def balance(self, new_balance: float) -> None:
         self._balance = new_balance
 
+    def __eq__(self, other):
+        return self.id == other.id
+
 
 class Transaction:
     def __init__(self, amount: float, account: Account, id: int = None, description: str = None,

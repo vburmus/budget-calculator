@@ -21,8 +21,8 @@ def goto_sign_up(current_window):
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
-def goto_main_page(user, current_window):
-    mainWindow = MainPage(user)
+def goto_main_page(user, current_window, account=None):
+    mainWindow = MainPage(user, account)
     widget.addWidget(mainWindow)
     widget.removeWidget(current_window)
     current_window.deleteLater()
@@ -37,14 +37,14 @@ def goto_login_page(current_window):
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
-def goto_user_settings(user, current_window):
-    userPage = UserSettingsPage(user)
+def goto_user_settings(user, current_window, account=None):
+    userPage = UserSettingsPage(user, account)
     widget.addWidget(userPage)
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
-def goto_adding_new_account(user, current_window):
-    addAcc = AddAccountPage(user)
+def goto_adding_new_account(user, current_window, account=None):
+    addAcc = AddAccountPage(user, account)
     widget.addWidget(addAcc)
     widget.removeWidget(current_window)
     current_window.deleteLater()
@@ -77,16 +77,16 @@ def goto_add_transaction_page(user, current_account, current_window):
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
-def goto_manage_categories_page(user, current_window):
-    manageCat = ManageCategoriesPage(user)
+def goto_manage_categories_page(user, current_window, account):
+    manageCat = ManageCategoriesPage(user, account)
     widget.addWidget(manageCat)
     widget.removeWidget(current_window)
     current_window.deleteLater()
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
-def goto_add_category_page(user, current_window):
-    addCat = AddCategoryPage(user)
+def goto_add_category_page(user, current_window, account):
+    addCat = AddCategoryPage(user, account)
     widget.addWidget(addCat)
     widget.removeWidget(current_window)
     current_window.deleteLater()
@@ -150,7 +150,7 @@ class SignUpPage(QWidget):
 
 
 class MainPage(QWidget):
-    def __init__(self, user):
+    def __init__(self, user, account=None):
         super(MainPage, self).__init__()
         uic.loadUi("ui/MainPage.ui", self)
 
@@ -163,10 +163,11 @@ class MainPage(QWidget):
         self.userName.setText(self.user.login)
 
         self.signOutButton.clicked.connect(lambda: goto_login_page(self))
-        self.settingsButton.clicked.connect(lambda: goto_user_settings(self.user, self))
-        self.addAccountButton.clicked.connect(lambda: goto_adding_new_account(self.user, self))
+        self.settingsButton.clicked.connect(lambda: goto_user_settings(self.user, self, self.current_account))
+        self.addAccountButton.clicked.connect(lambda: goto_adding_new_account(self.user, self,
+                                                                              self.current_account))
         self.manageAccButton.clicked.connect(lambda: goto_manage_account_page(self.current_account, self.user, self))
-        self.manageCatButton.clicked.connect(lambda: goto_manage_categories_page(self.user, self))
+        self.manageCatButton.clicked.connect(lambda: goto_manage_categories_page(self.user, self, self.current_account))
         self.addTransactionButton.clicked.connect(lambda: goto_add_transaction_page(self.user, self.current_account,
                                                                                     self))
         self.changeTransactionButton.clicked.connect(self.update_transaction)
@@ -174,16 +175,20 @@ class MainPage(QWidget):
 
         self.transactionsListBox.itemSelectionChanged.connect(self.transaction_chosen)
 
-        self.comboBoxAccounts.currentTextChanged.connect(self.account_changed)
+        self.comboBoxAccounts.currentIndexChanged.connect(self.account_changed)
 
-        self.current_account = None
-        self.loading_user_accounts(self.account_service.get_user_accounts(self.user))
+        self.current_account = account
+        user_accounts = self.account_service.get_user_accounts(self.user)
+        self.loading_user_accounts(user_accounts)
+
+        if account:
+            index = user_accounts.index(account)
+            self.comboBoxAccounts.setCurrentIndex(index)
 
         if self.current_account:
             self.current_transaction = None
             self.account_transactions = self.account_service.get_account_transactions(self.current_account)
             self.current_transaction_index = -1
-            #self.refresh_transactions()
 
     def update_transaction(self):
         if self.current_transaction:
@@ -193,7 +198,6 @@ class MainPage(QWidget):
         if len(user_accounts) != 0:
             for account in user_accounts:
                 self.comboBoxAccounts.addItem(account.name)
-            #self.account_changed()
 
     def refresh_transactions(self):
         self.transactionsListBox.clear()
@@ -230,19 +234,21 @@ class MainPage(QWidget):
 
     def delete_transaction(self):
         if self.current_transaction:
-            self.account_service.delete_transaction(self.current_transaction)
+            self.current_account = self.account_service.delete_transaction(self.current_transaction)
+            self.accountBalanceLabel.setText("Your account balance: " + str(self.current_account.balance))
             self.refresh_transactions()
 
 
 class UserSettingsPage(QWidget):
-    def __init__(self, user):
+    def __init__(self, user, account=None):
         super(UserSettingsPage, self).__init__()
         uic.loadUi("ui/UserSettingsPage.ui", self)
 
         self.user_service = UserService()
         self.user = user
+        self.account = account
 
-        self.exitButton.clicked.connect(lambda: goto_main_page(self.user, self))
+        self.exitButton.clicked.connect(lambda: goto_main_page(self.user, self, account))
         self.submitButton.clicked.connect(self.submit_changes)
         self.deleteAccountButton.clicked.connect(self.delete_account)
 
@@ -276,17 +282,19 @@ class UserSettingsPage(QWidget):
 
 
 class AddAccountPage(QWidget):
-    def __init__(self, user):
+    def __init__(self, user, account=None):
         super(AddAccountPage, self).__init__()
         uic.loadUi("ui/AddAccountPage.ui", self)
 
         self.account_service = AccountService()
         self.user = user
+        self.account = account
 
-        self.exitButton.clicked.connect(lambda: goto_main_page(self.user, self))
+        self.exitButton.clicked.connect(lambda: goto_main_page(self.user, self, self.account))
         self.addButton.clicked.connect(self.add_new_account)
 
         self.communicateTextLabel.setText("")
+
 
     def add_new_account(self):
         success, message = self.account_service.create(self.AccNameText.text(), self.user,
@@ -316,7 +324,7 @@ class ManageAccountPage(QWidget):
         self.change_text_fields()
 
         self.submitButton.clicked.connect(self.submit_changes)
-        self.exitButton.clicked.connect(lambda: goto_main_page(self.user, self))
+        self.exitButton.clicked.connect(lambda: goto_main_page(self.user, self, self.account))
         self.deleteAccountButton.clicked.connect(self.delete_current_account)
 
     def change_text_fields(self):
@@ -348,7 +356,7 @@ class ManageAccountPage(QWidget):
 
 
 class ManageCategoriesPage(QWidget):
-    def __init__(self, user):
+    def __init__(self, user, account=None):
         super(ManageCategoriesPage, self).__init__()
         uic.loadUi("ui/ManageCategoriesPage.ui", self)
 
@@ -356,9 +364,10 @@ class ManageCategoriesPage(QWidget):
         self.user_service = UserService()
         self.category_service = CategoryService()
         self.current_category = None
+        self.account = account
 
-        self.exitButton.clicked.connect(lambda: goto_main_page(self.user, self))
-        self.addCatButton.clicked.connect(lambda: goto_add_category_page(self.user))
+        self.exitButton.clicked.connect(lambda: goto_main_page(self.user, self, self.account))
+        self.addCatButton.clicked.connect(lambda: goto_add_category_page(self.user, self.account))
         self.deleteCategoryButton.clicked.connect(self.delete_category)
         self.submitButton.clicked.connect(self.update_category)
 
@@ -411,14 +420,15 @@ class ManageCategoriesPage(QWidget):
 
 
 class AddCategoryPage(QWidget):
-    def __init__(self, user):
+    def __init__(self, user, account=None):
         super(AddCategoryPage, self).__init__()
         uic.loadUi("ui/AddCategoryPage.ui", self)
 
         self.user = user
         self.user_service = UserService()
+        self.account = account
 
-        self.exitButton.clicked.connect(lambda: goto_manage_categories_page(self.user, self))
+        self.exitButton.clicked.connect(lambda: goto_manage_categories_page(self.user, self, account))
         self.addButton.clicked.connect(self.add_category)
 
         self.communicateTextLabel.setText("")
@@ -449,7 +459,7 @@ class AddTransactionPage(QWidget):
 
         self.communicateTextLabel.setText("")
 
-        self.exitButton.clicked.connect(lambda: goto_main_page(self.user, self))
+        self.exitButton.clicked.connect(lambda: goto_main_page(self.user, self, self.account))
         self.addTransButton.clicked.connect(self.add_transaction)
 
         self.categoriesComboBox.currentTextChanged.connect(self.category_changed)
@@ -496,7 +506,7 @@ class ChangeTransactionPage(QWidget):
         self.AmountText.setPlaceholderText(str(self.transaction.amount))
         self.TransDescrText.setPlaceholderText(self.transaction.description)
 
-        self.exitButton.clicked.connect(lambda: goto_main_page(self.user, self))
+        self.exitButton.clicked.connect(lambda: goto_main_page(self.user, self, self.account))
         self.submitButton.clicked.connect(self.submit_changes)
 
         self.categoriesComboBox.currentTextChanged.connect(self.category_changed)

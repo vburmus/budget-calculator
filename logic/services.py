@@ -228,11 +228,11 @@ class AccountService:
 
     def update_balance(self, account, balance):
         account.balance = balance
-        self.account_repository.update(account)
+        return self.account_repository.update(account)
 
     def delete_transaction(self, transaction: Transaction):
         self.transaction_repository.delete(transaction)
-        self.update_balance(account=transaction.account, balance=transaction.account.balance - transaction.amount)
+        return self.update_balance(account=transaction.account, balance=transaction.account.balance - transaction.amount)
 
     def update_transaction(self, transaction: Transaction, amount: str = None, description: str = None,
                            category: Category = None):
