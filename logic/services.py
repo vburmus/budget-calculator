@@ -6,6 +6,9 @@ from loguru import logger
 from logic.datavalidation import DataValidation
 from logic.entities import User, Account, Category, UserCategory, Transaction
 
+import csv
+import os
+
 
 class UserService:
     def __init__(self):
@@ -260,6 +263,21 @@ class AccountService:
 
     def get_account_transactions(self, account: Account):
         return self.transaction_repository.get_by_param(account)
+
+    def create_csv_file(self, account):
+        filename = f"{account.name}_transactions.csv"
+        path = "exports"
+        file_path = fr"{path}/{filename}"
+        with open(file_path, 'w', newline='') as file:
+            writer = csv.writer(file, delimiter=';')
+
+            writer.writerow(['Transaction_category', 'transaction_amount', 'transaction_date',
+                             'transaction_description'])
+
+            for transaction in self.get_account_transactions(account):
+                writer.writerow(
+                    [transaction.category.name if transaction.category else "None", transaction.amount,
+                     transaction.date, transaction.description])
 
 
 class CategoryService:

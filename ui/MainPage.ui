@@ -678,7 +678,7 @@ QPushButton:pressed{
    <property name="geometry">
     <rect>
      <x>550</x>
-     <y>610</y>
+     <y>620</y>
      <width>221</width>
      <height>31</height>
     </rect>
@@ -719,7 +719,7 @@ QPushButton:pressed{
    <property name="geometry">
     <rect>
      <x>550</x>
-     <y>680</y>
+     <y>660</y>
      <width>221</width>
      <height>31</height>
     </rect>
@@ -754,6 +754,45 @@ QPushButton:pressed{
    </property>
    <property name="text">
     <string>Generate plots </string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="importToCsvButton">
+   <property name="geometry">
+    <rect>
+     <x>550</x>
+     <y>700</y>
+     <width>221</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Bahnschrift</family>
+     <pointsize>15</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{
+	border-radius: 8px;
+	background-color: rgb(255, 255, 255);
+}
+
+QPushButton:hover{
+	border-radius: 8px;
+	background-color:  rgb(148, 17, 255);
+	color: white;
+}
+
+QPushButton:pressed{
+	border-radius: 8px;
+	background-color: rgb(187, 26, 202);
+	color: white;
+}</string>
+   </property>
+   <property name="text">
+    <string>Import to csv</string>
    </property>
   </widget>
  </widget>

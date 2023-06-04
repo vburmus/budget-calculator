@@ -85,7 +85,7 @@ def goto_manage_categories_page(user, current_window, account):
     widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
-def goto_add_category_page(user, current_window, account):
+def goto_add_category_page(user, current_window, account=None):
     addCat = AddCategoryPage(user, account)
     widget.addWidget(addCat)
     widget.removeWidget(current_window)
@@ -170,6 +170,8 @@ class MainPage(QWidget):
         self.manageCatButton.clicked.connect(lambda: goto_manage_categories_page(self.user, self, self.current_account))
         self.addTransactionButton.clicked.connect(lambda: goto_add_transaction_page(self.user, self.current_account,
                                                                                     self))
+        self.importToCsvButton.clicked.connect(self.import_to_csv)
+
         self.changeTransactionButton.clicked.connect(self.update_transaction)
         self.deleteTransButton.clicked.connect(self.delete_transaction)
 
@@ -189,6 +191,9 @@ class MainPage(QWidget):
             self.current_transaction = None
             self.account_transactions = self.account_service.get_account_transactions(self.current_account)
             self.current_transaction_index = -1
+
+    def import_to_csv(self):
+        self.account_service.create_csv_file(self.current_account)
 
     def update_transaction(self):
         if self.current_transaction:
@@ -367,7 +372,7 @@ class ManageCategoriesPage(QWidget):
         self.account = account
 
         self.exitButton.clicked.connect(lambda: goto_main_page(self.user, self, self.account))
-        self.addCatButton.clicked.connect(lambda: goto_add_category_page(self.user, self.account))
+        self.addCatButton.clicked.connect(lambda: goto_add_category_page(self.user, self, self.account))
         self.deleteCategoryButton.clicked.connect(self.delete_category)
         self.submitButton.clicked.connect(self.update_category)
 

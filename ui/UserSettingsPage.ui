@@ -384,8 +384,8 @@ QPushButton:pressed{
   <widget class="QPushButton" name="deleteAccountButton">
    <property name="geometry">
     <rect>
-     <x>690</x>
-     <y>700</y>
+     <x>550</x>
+     <y>740</y>
      <width>221</width>
      <height>31</height>
     </rect>
@@ -418,45 +418,6 @@ QPushButton:pressed{
    </property>
    <property name="text">
     <string>Delete my account</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="importToCsvButton">
-   <property name="geometry">
-    <rect>
-     <x>420</x>
-     <y>700</y>
-     <width>221</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>11</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">QPushButton{
-	border-radius: 8px;
-	background-color: rgb(255, 255, 255);
-}
-
-QPushButton:hover{
-	border-radius: 8px;
-	background-color:  rgb(148, 17, 255);
-	color: white;
-}
-
-QPushButton:pressed{
-	border-radius: 8px;
-	background-color: rgb(187, 26, 202);
-	color: white;
-}</string>
-   </property>
-   <property name="text">
-    <string>Import transactions to csv</string>
    </property>
   </widget>
  </widget>
