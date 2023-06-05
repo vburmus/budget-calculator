@@ -1,5 +1,7 @@
 from typing import List
 
+from matplotlib import pyplot as plt
+
 from logic.repositories import UserRepository, AccountRepository, CategoryRepository, UserHasCategoryRepository, \
     TransactionRepository
 from loguru import logger
@@ -278,6 +280,35 @@ class AccountService:
                 writer.writerow(
                     [id, transaction.category.name if transaction.category else "None", transaction.amount,
                      transaction.date, transaction.description])
+                id += 1
+
+    def generate_average_transactions_plot(self, account):
+        transactions = self.get_account_transactions(account)
+        categories = {}
+        averages = []
+
+        for transaction in transactions:
+            category = transaction.category.name if transaction.category else "None"
+            if category in categories:
+                categories[category].append(transaction.amount)
+            else:
+                categories[category] = [transaction.amount]
+
+        for category, amounts in categories.items():
+            average = sum(amounts) / len(amounts)
+            averages.append((category, average))
+
+        averages.sort(key=lambda x: x[1], reverse=True)
+        categories = [item[0] for item in averages]
+        averages = [item[1] for item in averages]
+
+        plt.figure(figsize=(10, 6))
+        plt.bar(categories, averages)
+        plt.xlabel("Category")
+        plt.ylabel("Average Transaction Amount")
+        plt.title("Average Transactions by Categories")
+        plt.xticks(rotation=45)
+        plt.show()
 
 
 class CategoryService:
