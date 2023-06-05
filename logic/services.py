@@ -235,22 +235,20 @@ class AccountService:
 
     def delete_transaction(self, transaction: Transaction):
         self.transaction_repository.delete(transaction)
-        return self.update_balance(account=transaction.account, balance=transaction.account.balance - transaction.amount)
+        return self.update_balance(account=transaction.account,
+                                   balance=transaction.account.balance - transaction.amount)
 
     def update_transaction(self, transaction: Transaction, amount: str = None, description: str = None,
                            category: Category = None):
         if not (amount or description or category):
             return False, f"Credentials can't be null"
-        if not DataValidation.isfloat(amount):
+        if amount and not DataValidation.isfloat(amount):
             return False, "Amount must be float"
-        if float(
-                amount) == transaction.amount or description == transaction.description or category == transaction.category:
-            return False, "Credentials can't be same as previous"
         if amount:
             if not DataValidation.isfloat(amount):
                 return False, "Amount must be float"
             famount = float(amount)
-            correction = transaction.amount - famount
+            correction = famount - transaction.amount
             transaction.amount = famount
             transaction.account.balance = transaction.account.balance + correction
             self.account_repository.update(transaction.account)
