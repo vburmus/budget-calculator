@@ -32,7 +32,7 @@ UPDATE_USER_QUERY = "UPDATE user SET login = ?, password = ? WHERE id = ?"
 
 SELECT_TRANSACTIONS_BY_ACCOUNT_QUERY = "SELECT t.id,t.amount,t.description,t.date,t.account_id,c.id,c.name FROM transaction as t left join category as c on c.id = t.category_id WHERE account_id = ?"
 
-SELECT_TRANSACTION_BY_ID_QUERY = "SELECT * FROM transaction WHERE id = ?"
+SELECT_TRANSACTION_BY_ID_QUERY = "SELECT t.id,t.amount,t.description,t.date,t.account_id,c.id,c.name FROM transaction as t left join category as c on c.id = t.category_id WHERE t.id = ?"
 
 CREATE_TRANSACTION_QUERY = "INSERT INTO transaction" \
                            " (amount, description, account_id,category_id) VALUES (?,?,?,?)"
