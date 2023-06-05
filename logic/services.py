@@ -265,16 +265,18 @@ class AccountService:
     def create_csv_file(self, account):
         filename = f"{account.name}_transactions.csv"
         path = "exports"
+        if not os.path.exists(path):
+            os.makedirs(path)
+
         file_path = fr"{path}/{filename}"
         with open(file_path, 'w', newline='') as file:
-            writer = csv.writer(file, delimiter=';')
+            writer = csv.writer(file, delimiter=',')
 
-            writer.writerow(['Transaction_category', 'transaction_amount', 'transaction_date',
-                             'transaction_description'])
-
+            writer.writerow(['id', 'category', 'amount', 'date', 'description'])
+            id = 1
             for transaction in self.get_account_transactions(account):
                 writer.writerow(
-                    [transaction.category.name if transaction.category else "None", transaction.amount,
+                    [id, transaction.category.name if transaction.category else "None", transaction.amount,
                      transaction.date, transaction.description])
 
 
