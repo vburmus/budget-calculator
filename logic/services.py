@@ -62,10 +62,7 @@ class UserService:
         logger.info(f"Searching user with login = {login} ")
         return self.user_repository.get_by_param(login)
 
-    # Response of this method should be handled in the ui side and logger
-    # WARNING TYPE IF FALSE
-    # if we can update we return True + user
-    # if not -> false + message
+
     def update(self, user: User, given_password: str, login: str = None, password: str = None):
         bd_user = self.get_user_by_id(user.id)
         logger.info(f"Update user {user.login}...")
@@ -89,7 +86,7 @@ class UserService:
             return True, self.user_repository.update(user)
         return False, "Empty credentials"
 
-    # +- -||- HANDLE LOGS!
+
     def delete(self, user: User, given_password: str):
         bd_user = self.get_user_by_id(user.id)
         if not DataValidation.is_password_valid(bd_user.password,
