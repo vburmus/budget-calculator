@@ -224,7 +224,6 @@ class MainPage(QWidget):
         self.accountDescription.setText(self.current_account.description)
         self.accountBalanceLabel.setText("Your account balance: " + str(self.current_account.balance))
 
-        # THIS LOADS CATEGORIES!
         self.refresh_transactions()
 
     def transaction_chosen(self):
@@ -383,7 +382,7 @@ class ManageCategoriesPage(QWidget):
 
         self.refresh_categories()
 
-    # TODO stylesheet
+
     def category_chose(self):
         selected_items = self.categoriesListBox.selectedItems()
         if not selected_items:
