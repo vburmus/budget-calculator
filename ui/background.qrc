@@ -1,0 +1,12 @@
+<RCC>
+  <qresource prefix="ui">
+    <file>exit-hover.png</file>
+    <file>exit-pressed.png</file>
+    <file>exit.png</file>
+    <file>settings.png</file>
+    <file>settings_pressed.png</file>
+    <file>settings_hover.png</file>
+    <file>logo.png</file>
+    <file>bckimg.jpg</file>
+  </qresource>
+</RCC>
